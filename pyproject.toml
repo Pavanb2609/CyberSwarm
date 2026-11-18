@@ -1,0 +1,53 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cyberswarm"
+version = "0.3.0"
+description = "Self-hosted multi-agent offensive security platform (Ollama-only)"
+requires-python = ">=3.10"
+dependencies = [
+    "requests>=2.31",
+    "PyYAML>=6.0",
+    "dnspython>=2.4",
+    "ldap3>=2.9",
+]
+
+[project.scripts]
+cyberswarm = "cli:main"
+
+[tool.setuptools]
+packages = ["agents", "tools", "tools.api", "tools.attack", "tools.cloud", "tools.cms",
+            "tools.container", "tools.content", "tools.directory", "tools.dns", "tools.iot",
+            "tools.javascript", "tools.params", "tools.passive", "tools.portscan",
+            "tools.screenshots", "tools.tls", "tools.validation", "tools.web", "schema"]
+py-modules = ["cli", "model_client", "system_map", "build_system_map", "evidence_store",
+              "attack_evidence_store", "recon_engine", "approval_gate",
+              "generate_attack_report", "run_agent_loop", "run_recon_loop", "target_utils", "utils",
+              "planner_policy", "run_benchmark", "evidence_trail", "auth_handling"]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 120
+
+[tool.ruff.lint]
+select = [
+    "E",     # pycodestyle errors
+    "W",     # pycodestyle warnings
+    "F",     # pyflakes
+    "I",     # isort
+    "B",     # flake8-bugbear
+    "UP",    # pyupgrade
+    "SIM",   # flake8-simplify
+    "RUF",   # ruff-specific
+]
+ignore = [
+    "E501",   # line too long (handled by formatter)
+    "B008",   # function call in default argument (common pattern for dataclasses)
+    "SIM108", # ternary operator (readability preference)
+    "UP007",  # use X | Y for union (not all codebases ready)
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["B", "SIM"]  # relax bugbear/simplify in tests

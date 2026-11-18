@@ -1,0 +1,1636 @@
+[
+ {
+  "id": "ho_port_known_service_unknown",
+  "description": "Port 8080 open, service unidentified -> service detection",
+  "evidence": {
+   "target": "192.0.2.21",
+   "authorized_scope": true,
+   "target_type": "host",
+   "reachable": true,
+   "open_ports": [
+    8080
+   ],
+   "services": [],
+   "technologies": [],
+   "completed_actions": [
+    "PORT_DISCOVERY"
+   ],
+   "failed_actions": [],
+   "previous_observations": []
+  },
+  "expected_profiles": [
+   "UNKNOWN"
+  ],
+  "expected_capabilities": [
+   "SERVICE_DETECTION"
+  ]
+ },
+ {
+  "id": "ho_web_tech_unknown",
+  "description": "Web ports open, technologies not yet identified",
+  "evidence": {
+   "target": "198.51.100.14",
+   "authorized_scope": true,
+   "target_type": "domain",
+   "reachable": true,
+   "open_ports": [
+    80,
+    443
+   ],
+   "services": [
+    "http",
+    "https"
+   ],
+   "technologies": [],
+   "completed_actions": [
+    "PORT_DISCOVERY",
+    "SERVICE_DETECTION"
+   ],
+   "failed_actions": [],
+   "previous_observations": []
+  },
+  "expected_profiles": [
+   "WEB_APPLICATION"
+  ],
+  "expected_capabilities": [
+   "WEB_TECHNOLOGY_DISCOVERY",
+   "WEB_PROBING"
+  ]
+ },
+ {
+  "id": "ho_web_tech_found_full_surface",
+  "description": "Web technologies identified, full web surface still open",
+  "evidence": {
+   "target": "shop.acme-lab.test",
+   "authorized_scope": true,
+   "target_type": "domain",
+   "reachable": true,
+   "open_ports": [
+    80,
+    443
+   ],
+   "services": [
+    "http",
+    "https"
+   ],
+   "technologies": [
+    "Express",
+    "Nginx"
+   ],
+   "completed_actions": [
+    "PORT_DISCOVERY",
+    "SERVICE_DETECTION",
+    "WEB_TECHNOLOGY_DISCOVERY"
+   ],
+   "failed_actions": [],
+   "previous_observations": []
+  },
+  "expected_profiles": [
+   "WEB_APPLICATION"
+  ],
+  "expected_capabilities": [
+   "CONTENT_DISCOVERY",
+   "WEB_PROBING",
+   "PARAMETER_DISCOVERY",
+   "JAVASCRIPT_ANALYSIS",
+   "SCREENSHOT_CAPTURE"
+  ]
+ },
+ {
+  "id": "ho_crawled_params_pending",
+  "description": "Web crawling completed, parameters not yet enumerated",
+  "evidence": {
+   "target": "portal.acme-lab.test",
+   "authorized_scope": true,
+   "target_type": "domain",
+   "reachable": true,
+   "open_ports": [
+    443
+   ],
+   "services": [
+    "https"
+   ],
+   "technologies": [
+    "Nginx"
+   ],
+   "completed_actions": [
+    "PORT_DISCOVERY",
+    "SERVICE_DETECTION",
+    "WEB_TECHNOLOGY_DISCOVERY",
+    "WEB_CRAWLING"
+   ],
+   "failed_actions": [],
+   "previous_observations": []
+  },
+  "expected_profiles": [
+   "WEB_APPLICATION"
+  ],
+  "expected_capabilities": [
+   "CONTENT_DISCOVERY",
+   "PARAMETER_DISCOVERY",
+   "SCREENSHOT_CAPTURE"
+  ]
+ },
+ {
+  "id": "ho_params_done_probe_pending",
+  "description": "Parameters enumerated, probing not yet attempted",
+  "evidence": {
+   "target": "portal.acme-lab.test",
+   "authorized_scope": true,
+   "target_type": "domain",
+   "reachable": true,
+   "open_ports": [
+    443
+   ],
+   "services": [
+    "https"
+   ],
+   "technologies": [
+    "Nginx"
+   ],
+   "completed_actions": [
+    "PORT_DISCOVERY",
+    "SERVICE_DETECTION",
+    "WEB_TECHNOLOGY_DISCOVERY",
+    "WEB_CRAWLING",
+    "PARAMETER_DISCOVERY"
+   ],
+   "failed_actions": [],
+   "previous_observations": []
+  },
+  "expected_profiles": [
+   "WEB_APPLICATION"
+  ],
+  "expected_capabilities": [
+   "CONTENT_DISCOVERY",
+   "WEB_PROBING",
+   "SCREENSHOT_CAPTURE"
+  ]
+ },
+ {
+  "id": "ho_probed_screenshot_pending",
+  "description": "Probing done, screenshot evidence still missing",
+  "evidence": {
+   "target": "intranet2.acme-lab.test",
+   "authorized_scope": true,
+   "target_type": "domain",
+   "reachable": true,
+   "open_ports": [
+    80
+   ],
+   "services": [
+    "http"
+   ],
+   "technologies": [
+    "Apache"
+   ],
+   "completed_actions": [
+    "PORT_DISCOVERY",
+    "SERVICE_DETECTION",
+    "WEB_PROBING",
+    "WEB_TECHNOLOGY_DISCOVERY",
+    "HEADER_ANALYSIS",
+    "CONTENT_DISCOVERY",
+    "PARAMETER_DISCOVERY"
+   ],
+   "failed_actions": [],
+   "previous_observations": []
+  },
+  "expected_profiles": [
+   "WEB_APPLICATION"
+  ],
+  "expected_capabilities": [
+   "SCREENSHOT_CAPTURE"
+  ]
+ },
+ {
+  "id": "ho_probed_header_pending",
+  "description": "Probing and screenshots done, header analysis outstanding",
+  "evidence": {
+   "target": "portal.acme-lab.test",
+   "authorized_scope": true,
+   "target_type": "domain",
+   "reachable": true,
+   "open_ports": [
+    443
+   ],
+   "services": [
+    "https"
+   ],
+   "technologies": [
+    "Nginx"
+   ],
+   "completed_actions": [
+    "PORT_DISCOVERY",
+    "SERVICE_DETECTION",
+    "WEB_TECHNOLOGY_DISCOVERY",
+    "WEB_CRAWLING",
+    "PARAMETER_DISCOVERY",
+    "WEB_PROBING",
+    "SCREENSHOT_CAPTURE"
+   ],
+   "failed_actions": [],
+   "previous_observations": []
+  },
+  "expected_profiles": [
+   "WEB_APPLICATION"
+  ],
+  "expected_capabilities": [
+   "HEADER_ANALYSIS"
+  ]
+ },
+ {
+  "id": "ho_https_tls_pending",
+  "description": "HTTPS service, TLS analysis not yet performed",
+  "evidence": {
+   "target": "shop.acme-lab.test",
+   "authorized_scope": true,
+   "target_type": "domain",
+   "reachable": true,
+   "open_ports": [
+    80,
+    443
+   ],
+   "services": [
+    "http",
+    "https"
+   ],
+   "technologies": [
+    "Nginx",
+    "PHP"
+   ],
+   "completed_actions": [
+    "PORT_DISCOVERY",
+    "SERVICE_DETECTION",
+    "WEB_PROBING",
+    "WEB_TECHNOLOGY_DISCOVERY",
+    "HEADER_ANALYSIS",
+    "CONTENT_DISCOVERY",
+    "PARAMETER_DISCOVERY",
+    "SCREENSHOT_CAPTURE"
+   ],
+   "failed_actions": [],
+   "previous_observations": []
+  },
+  "expected_profiles": [
+   "WEB_APPLICATION"
+  ],
+  "expected_capabilities": [
+   "TLS_ANALYSIS"
+  ]
+ },
+ {
+  "id": "ho_web_everything_done",
+  "description": "All web capabilities complete (incl. TLS/header/screenshot) -> stop",
+  "evidence": {
+   "target": "portal.acme-lab.test",
+   "authorized_scope": true,
+   "target_type": "domain",
+   "reachable": true,
+   "open_ports": [
+    80,
+    443
+   ],
+   "services": [
+    "http",
+    "https"
+   ],
+   "technologies": [
+    "Nginx",
+    "PHP"
+   ],
+   "completed_actions": [
+    "PASSIVE_ASSET_DISCOVERY",
+    "SUBDOMAIN_DISCOVERY",
+    "HOST_DISCOVERY",
+    "PORT_DISCOVERY",
+    "SERVICE_DETECTION",
+    "WEB_PROBING",
+    "WEB_TECHNOLOGY_DISCOVERY",
+    "CONTENT_DISCOVERY",
+    "PARAMETER_DISCOVERY",
+    "JAVASCRIPT_ANALYSIS",
+    "SCREENSHOT_CAPTURE",
+    "TLS_ANALYSIS",
+    "HEADER_ANALYSIS"
+   ],
+   "failed_actions": [],
+   "previous_observations": [
+    "Comprehensive recon already performed"
+   ]
+  },
+  "expected_profiles": [
+   "WEB_APPLICATION",
+   "DOMAIN"
+  ],
+  "expected_capabilities": [
+   "STOP_NO_RELEVANT_ACTION"
+  ]
+ },
+ {
+  "id": "ho_http_only_all_done",
+  "description": "HTTP-only host, all capabilities complete, no TLS to analyse -> stop",
+  "evidence": {
+   "target": "legacy.acme-lab.test",
+   "authorized_scope": true,
+   "target_type": "domain",
+   "reachable": true,
+   "open_ports": [
+    80
+   ],
+   "services": [
+    "http"
+   ],
+   "technologies": [
+    "Apache"
+   ],
+   "completed_actions": [
+    "PORT_DISCOVERY",
+    "SERVICE_DETECTION",
+    "WEB_PROBING",
+    "WEB_TECHNOLOGY_DISCOVERY",
+    "HEADER_ANALYSIS",
+    "CONTENT_DISCOVERY",
+    "PARAMETER_DISCOVERY",
+    "SCREENSHOT_CAPTURE"
+   ],
+   "failed_actions": [],
+   "previous_observations": []
+  },
+  "expected_profiles": [
+   "WEB_APPLICATION"
+  ],
+  "expected_capabilities": [
+   "STOP_NO_RELEVANT_ACTION"
+  ]
+ },
+ {
+  "id": "ho_wordpress_detected",
+  "description": "WordPress identified from fingerprints",
+  "evidence": {
+   "target": "blog.acme-lab.test",
+   "authorized_scope": true,
+   "target_type": "domain",
+   "reachable": true,
+   "open_ports": [
+    80,
+    443
+   ],
+   "services": [
+    "http",
+    "https"
+   ],
+   "technologies": [
+    "WordPress",
+    "PHP"
+   ],
+   "completed_actions": [
+    "PORT_DISCOVERY",
+    "SERVICE_DETECTION",
+    "WEB_TECHNOLOGY_DISCOVERY"
+   ],
+   "failed_actions": [],
+   "previous_observations": []
+  },
+  "expected_profiles": [
+   "CMS"
+  ],
+  "expected_capabilities": [
+   "CMS_IDENTIFICATION",
+   "CMS_ASSESSMENT"
+  ]
+ },
+ {
+  "id": "ho_cms_identified_assess_pending",
+  "description": "CMS identification already logged, assessment pending",
+  "evidence": {
+   "target": "blog.acme-lab.test",
+   "authorized_scope": true,
+   "target_type": "domain",
+   "reachable": true,
+   "open_ports": [
+    80,
+    443
+   ],
+   "services": [
+    "http",
+    "https"
+   ],
+   "technologies": [
+    "WordPress",
+    "PHP"
+   ],
+   "completed_actions": [
+    "PORT_DISCOVERY",
+    "SERVICE_DETECTION",
+    "WEB_TECHNOLOGY_DISCOVERY",
+    "CMS_IDENTIFICATION"
+   ],
+   "failed_actions": [],
+   "previous_observations": [
+    "CMS identification: WordPress 6.x"
+   ]
+  },
+  "expected_profiles": [
+   "CMS"
+  ],
+  "expected_capabilities": [
+   "CMS_ASSESSMENT"
+  ]
+ },
+ {
+  "id": "ho_drupal_detected",
+  "description": "Drupal fingerprinted",
+  "evidence": {
+   "target": "docs.acme-lab.test",
+   "authorized_scope": true,
+   "target_type": "domain",
+   "reachable": true,
+   "open_ports": [
+    80
+   ],
+   "services": [
+    "http"
+   ],
+   "technologies": [
+    "Drupal",
+    "PHP"
+   ],
+   "completed_actions": [
+    "PORT_DISCOVERY",
+    "SERVICE_DETECTION",
+    "WEB_TECHNOLOGY_DISCOVERY"
+   ],
+   "failed_actions": [],
+   "previous_observations": []
+  },
+  "expected_profiles": [
+   "CMS"
+  ],
+  "expected_capabilities": [
+   "CMS_IDENTIFICATION",
+   "CMS_ASSESSMENT"
+  ]
+ },
+ {
+  "id": "ho_cms_assessed_all_done",
+  "description": "CMS assessment and evidence capabilities complete -> stop",
+  "evidence": {
+   "target": "blog.acme-lab.test",
+   "authorized_scope": true,
+   "target_type": "domain",
+   "reachable": true,
+   "open_ports": [
+    80,
+    443
+   ],
+   "services": [
+    "http",
+    "https"
+   ],
+   "technologies": [
+    "WordPress"
+   ],
+   "completed_actions": [
+    "PASSIVE_ASSET_DISCOVERY",
+    "SUBDOMAIN_DISCOVERY",
+    "HOST_DISCOVERY",
+    "PORT_DISCOVERY",
+    "SERVICE_DETECTION",
+    "WEB_PROBING",
+    "WEB_TECHNOLOGY_DISCOVERY",
+    "CONTENT_DISCOVERY",
+    "PARAMETER_DISCOVERY",
+    "JAVASCRIPT_ANALYSIS",
+    "SCREENSHOT_CAPTURE",
+    "TLS_ANALYSIS",
+    "HEADER_ANALYSIS",
+    "CMS_IDENTIFICATION",
+    "CMS_ASSESSMENT"
+   ],
+   "failed_actions": [],
+   "previous_observations": [
+    "Comprehensive recon already performed"
+   ],
+   "cms_detected": "wordpress"
+  },
+  "expected_profiles": [
+   "CMS",
+   "DOMAIN"
+  ],
+  "expected_capabilities": [
+   "STOP_NO_RELEVANT_ACTION"
+  ]
+ },
+ {
+  "id": "ho_react_spa_detected",
+  "description": "React SPA detected, bundle not yet analysed",
+  "evidence": {
+   "target": "app.acme-lab.test",
+   "authorized_scope": true,
+   "target_type": "domain",
+   "reachable": true,
+   "open_ports": [
+    443
+   ],
+   "services": [
+    "https"
+   ],
+   "technologies": [
+    "React"
+   ],
+   "completed_actions": [
+    "PORT_DISCOVERY",
+    "SERVICE_DETECTION",
+    "WEB_TECHNOLOGY_DISCOVERY"
+   ],
+   "failed_actions": [],
+   "previous_observations": []
+  },
+  "expected_profiles": [
+   "SINGLE_PAGE_APPLICATION"
+  ],
+  "expected_capabilities": [
+   "JAVASCRIPT_ANALYSIS"
+  ]
+ },
+ {
+  "id": "ho_vue_spa_detected",
+  "description": "Vue SPA detected, bundle not yet analysed",
+  "evidence": {
+   "target": "dashboard.acme-lab.test",
+   "authorized_scope": true,
+   "target_type": "domain",
+   "reachable": true,
+   "open_ports": [
+    443
+   ],
+   "services": [
+    "https"
+   ],
+   "technologies": [
+    "Vue"
+   ],
+   "completed_actions": [
+    "PORT_DISCOVERY",
+    "SERVICE_DETECTION",
+    "WEB_TECHNOLOGY_DISCOVERY"
+   ],
+   "failed_actions": [],
+   "previous_observations": []
+  },
+  "expected_profiles": [
+   "SINGLE_PAGE_APPLICATION"
+  ],
+  "expected_capabilities": [
+   "JAVASCRIPT_ANALYSIS"
+  ]
+ },
+ {
+  "id": "ho_spa_js_done_crawl_pending",
+  "description": "JS analysis complete, discovered routes not yet crawled",
+  "evidence": {
+   "target": "app.acme-lab.test",
+   "authorized_scope": true,
+   "target_type": "domain",
+   "reachable": true,
+   "open_ports": [
+    443
+   ],
+   "services": [
+    "https"
+   ],
+   "technologies": [
+    "React"
+   ],
+   "completed_actions": [
+    "PORT_DISCOVERY",
+    "SERVICE_DETECTION",
+    "WEB_TECHNOLOGY_DISCOVERY",
+    "JAVASCRIPT_ANALYSIS"
+   ],
+   "failed_actions": [],
+   "previous_observations": [
+    "JS analysis: 14 client-side routes extracted"
+   ]
+  },
+  "expected_profiles": [
+   "SINGLE_PAGE_APPLICATION"
+  ],
+  "expected_capabilities": [
+   "WEB_CRAWLING"
+  ]
+ },
+ {
+  "id": "ho_spa_cdn_blocked_crawl",
+  "description": "CDN serves challenge pages, crawling yields nothing -> screenshot proof",
+  "evidence": {
+   "target": "www.bigcorp-lab.test",
+   "authorized_scope": true,
+   "target_type": "domain",
+   "reachable": true,
+   "open_ports": [
+    80,
+    443
+   ],
+   "services": [
+    "http",
+    "https"
+   ],
+   "technologies": [
+    "Amazon CloudFront",
+    "React"
+   ],
+   "completed_actions": [
+    "PASSIVE_ASSET_DISCOVERY",
+    "SUBDOMAIN_DISCOVERY",
+    "DNS_RESOLUTION",
+    "PORT_DISCOVERY",
+    "SERVICE_DETECTION",
+    "WEB_PROBING",
+    "WEB_TECHNOLOGY_DISCOVERY",
+    "TLS_ANALYSIS",
+    "JAVASCRIPT_ANALYSIS",
+    "WEB_CRAWLING"
+   ],
+   "failed_actions": [],
+   "previous_observations": []
+  },
+  "expected_profiles": [
+   "SINGLE_PAGE_APPLICATION",
+   "WEB_APPLICATION"
+  ],
+  "expected_capabilities": [
+   "SCREENSHOT_CAPTURE"
+  ]
+ },
+ {
+  "id": "ho_openapi_seen",
+  "description": "OpenAPI/Swagger document referenced in observations",
+  "evidence": {
+   "target": "api.acme-lab.test",
+   "authorized_scope": true,
+   "target_type": "domain",
+   "reachable": true,
+   "open_ports": [
+    443
+   ],
+   "services": [
+    "https"
+   ],
+   "technologies": [
+    "Nginx"
+   ],
+   "completed_actions": [
+    "PORT_DISCOVERY",
+    "SERVICE_DETECTION",
+    "WEB_TECHNOLOGY_DISCOVERY",
+    "WEB_CRAWLING"
+   ],
+   "failed_actions": [],
+   "previous_observations": [
+    "Discovered /openapi.json (OpenAPI 3 spec)"
+   ]
+  },
+  "expected_profiles": [
+   "REST_API"
+  ],
+  "expected_capabilities": [
+   "API_ENDPOINT_DISCOVERY"
+  ]
+ },
+ {
+  "id": "ho_api_endpoints_found",
+  "description": "API endpoint discovery complete, parameters pending",
+  "evidence": {
+   "target": "api.acme-lab.test",
+   "authorized_scope": true,
+   "target_type": "domain",
+   "reachable": true,
+   "open_ports": [
+    443
+   ],
+   "services": [
+    "https"
+   ],
+   "technologies": [
+    "Nginx"
+   ],
+   "completed_actions": [
+    "PORT_DISCOVERY",
+    "SERVICE_DETECTION",
+    "WEB_TECHNOLOGY_DISCOVERY",
+    "API_ENDPOINT_DISCOVERY"
+   ],
+   "failed_actions": [],
+   "previous_observations": [
+    "API discovery: 23 endpoints from OpenAPI spec"
+   ]
+  },
+  "expected_profiles": [
+   "REST_API"
+  ],
+  "expected_capabilities": [
+   "PARAMETER_DISCOVERY"
+  ]
+ },
+ {
+  "id": "ho_graphql_detected",
+  "description": "GraphQL endpoint identified",
+  "evidence": {
+   "target": "graph.acme-lab.test",
+   "authorized_scope": true,
+   "target_type": "domain",
+   "reachable": true,
+   "open_ports": [
+    443
+   ],
+   "services": [
+    "https"
+   ],
+   "technologies": [
+    "GraphQL",
+    "Node.js"
+   ],
+   "completed_actions": [
+    "PORT_DISCOVERY",
+    "SERVICE_DETECTION",
+    "WEB_TECHNOLOGY_DISCOVERY"
+   ],
+   "failed_actions": [],
+   "previous_observations": []
+  },
+  "expected_profiles": [
+   "GRAPHQL_API"
+  ],
+  "expected_capabilities": [
+   "API_ENDPOINT_DISCOVERY"
+  ]
+ },
+ {
+  "id": "ho_grafana_seen",
+  "description": "Grafana login page observed",
+  "evidence": {
+   "target": "metrics.acme-lab.test",
+   "authorized_scope": true,
+   "target_type": "domain",
+   "reachable": true,
+   "open_ports": [
+    3000
+   ],
+   "services": [
+    "http"
+   ],
+   "technologies": [
+    "Grafana"
+   ],
+   "completed_actions": [
+    "PORT_DISCOVERY",
+    "SERVICE_DETECTION",
+    "WEB_TECHNOLOGY_DISCOVERY"
+   ],
+   "failed_actions": [],
+   "previous_observations": []
+  },
+  "expected_profiles": [
+   "WEB_APPLICATION"
+  ],
+  "expected_capabilities": [
+   "API_ENDPOINT_DISCOVERY"
+  ]
+ },
+ {
+  "id": "ho_s3_bucket_refs",
+  "description": "Web app references an S3 bucket",
+  "evidence": {
+   "target": "media.acme-lab.test",
+   "authorized_scope": true,
+   "target_type": "domain",
+   "reachable": true,
+   "open_ports": [
+    443
+   ],
+   "services": [
+    "https"
+   ],
+   "technologies": [
+    "Amazon S3",
+    "Nginx"
+   ],
+   "completed_actions": [
+    "PORT_DISCOVERY",
+    "SERVICE_DETECTION",
+    "WEB_TECHNOLOGY_DISCOVERY"
+   ],
+   "failed_actions": [],
+   "previous_observations": [
+    "HTML references acme-media-backup.s3.amazonaws.com"
+   ]
+  },
+  "expected_profiles": [
+   "AWS_CLOUD",
+   "WEB_APPLICATION"
+  ],
+  "expected_capabilities": [
+   "CLOUD_ASSET_DISCOVERY"
+  ]
+ },
+ {
+  "id": "ho_docker_api_2375",
+  "description": "Docker API exposed on 2375",
+  "evidence": {
+   "target": "198.51.100.23",
+   "authorized_scope": true,
+   "target_type": "host",
+   "reachable": true,
+   "open_ports": [
+    2375
+   ],
+   "services": [
+    "docker-api"
+   ],
+   "technologies": [],
+   "completed_actions": [
+    "PORT_DISCOVERY",
+    "SERVICE_DETECTION"
+   ],
+   "failed_actions": [],
+   "previous_observations": []
+  },
+  "expected_profiles": [
+   "CONTAINER_PLATFORM"
+  ],
+  "expected_capabilities": [
+   "CONTAINER_DISCOVERY"
+  ]
+ },
+ {
+  "id": "ho_kubernetes_6443",
+  "description": "Kubernetes API on 6443",
+  "evidence": {
+   "target": "k8s-edge.acme-lab.test",
+   "authorized_scope": true,
+   "target_type": "domain",
+   "reachable": true,
+   "open_ports": [
+    443,
+    6443
+   ],
+   "services": [
+    "https",
+    "kubernetes-api"
+   ],
+   "technologies": [
+    "Kubernetes API"
+   ],
+   "completed_actions": [
+    "PORT_DISCOVERY",
+    "SERVICE_DETECTION",
+    "WEB_PROBING",
+    "WEB_TECHNOLOGY_DISCOVERY"
+   ],
+   "failed_actions": [],
+   "previous_observations": []
+  },
+  "expected_profiles": [
+   "KUBERNETES",
+   "CONTAINER_PLATFORM"
+  ],
+  "expected_capabilities": [
+   "CONTAINER_DISCOVERY"
+  ]
+ },
+ {
+  "id": "ho_mqtt_1883",
+  "description": "MQTT broker detected on 1883",
+  "evidence": {
+   "target": "203.0.113.40",
+   "authorized_scope": true,
+   "target_type": "host",
+   "reachable": true,
+   "open_ports": [
+    1883
+   ],
+   "services": [
+    "mqtt"
+   ],
+   "technologies": [],
+   "completed_actions": [
+    "PORT_DISCOVERY",
+    "SERVICE_DETECTION"
+   ],
+   "failed_actions": [],
+   "previous_observations": []
+  },
+  "expected_profiles": [
+   "IOT"
+  ],
+  "expected_capabilities": [
+   "IOT_SERVICE_IDENTIFICATION"
+  ]
+ },
+ {
+  "id": "ho_mail_mx_25_587",
+  "description": "SMTP endpoints on a mail domain",
+  "evidence": {
+   "target": "mail.acme-lab.test",
+   "authorized_scope": true,
+   "target_type": "domain",
+   "reachable": true,
+   "open_ports": [
+    25,
+    587
+   ],
+   "services": [
+    "smtp",
+    "smtps"
+   ],
+   "technologies": [],
+   "completed_actions": [
+    "PORT_DISCOVERY",
+    "SERVICE_DETECTION",
+    "DNS_RESOLUTION"
+   ],
+   "failed_actions": [],
+   "previous_observations": []
+  },
+  "expected_profiles": [
+   "MAIL_INFRASTRUCTURE"
+  ],
+  "expected_capabilities": [
+   "DNS_ENUMERATION"
+  ]
+ },
+ {
+  "id": "ho_ad_kerberos_ldap_smb",
+  "description": "Kerberos + LDAP + SMB signals -> Active Directory",
+  "evidence": {
+   "target": "203.0.113.60",
+   "authorized_scope": true,
+   "target_type": "host",
+   "reachable": true,
+   "open_ports": [
+    88,
+    389,
+    445
+   ],
+   "services": [
+    "kerberos",
+    "ldap",
+    "smb"
+   ],
+   "technologies": [
+    "Windows Server"
+   ],
+   "completed_actions": [
+    "PORT_DISCOVERY",
+    "SERVICE_DETECTION"
+   ],
+   "failed_actions": [],
+   "previous_observations": []
+  },
+  "expected_profiles": [
+   "ACTIVE_DIRECTORY"
+  ],
+  "expected_capabilities": [
+   "DIRECTORY_SERVICE_ENUMERATION"
+  ]
+ },
+ {
+  "id": "ho_ad_ldap_done_wsenum",
+  "description": "LDAP enumeration logged, Windows service enumeration pending",
+  "evidence": {
+   "target": "203.0.113.60",
+   "authorized_scope": true,
+   "target_type": "host",
+   "reachable": true,
+   "open_ports": [
+    88,
+    389,
+    445
+   ],
+   "services": [
+    "kerberos",
+    "ldap",
+    "smb"
+   ],
+   "technologies": [
+    "Windows Server"
+   ],
+   "completed_actions": [
+    "PORT_DISCOVERY",
+    "SERVICE_DETECTION",
+    "DIRECTORY_SERVICE_ENUMERATION"
+   ],
+   "failed_actions": [],
+   "previous_observations": [
+    "LDAP enumeration: 2 domain controllers, domain ACME"
+   ]
+  },
+  "expected_profiles": [
+   "ACTIVE_DIRECTORY"
+  ],
+  "expected_capabilities": [
+   "WINDOWS_SERVICE_ENUMERATION"
+  ]
+ },
+ {
+  "id": "ho_smb_only_host",
+  "description": "SMB only, OS not yet inferred",
+  "evidence": {
+   "target": "198.51.100.77",
+   "authorized_scope": true,
+   "target_type": "host",
+   "reachable": true,
+   "open_ports": [
+    445
+   ],
+   "services": [
+    "smb"
+   ],
+   "technologies": [],
+   "completed_actions": [
+    "PORT_DISCOVERY",
+    "SERVICE_DETECTION"
+   ],
+   "failed_actions": [],
+   "previous_observations": []
+  },
+  "expected_profiles": [
+   "UNKNOWN",
+   "NETWORK"
+  ],
+  "expected_capabilities": [
+   "WINDOWS_SERVICE_ENUMERATION",
+   "OPERATING_SYSTEM_IDENTIFICATION"
+  ]
+ },
+ {
+  "id": "ho_ssh_only_os_pending",
+  "description": "SSH only, OS not yet identified",
+  "evidence": {
+   "target": "198.51.100.31",
+   "authorized_scope": true,
+   "target_type": "host",
+   "reachable": true,
+   "open_ports": [
+    22
+   ],
+   "services": [
+    "ssh"
+   ],
+   "technologies": [],
+   "completed_actions": [
+    "PORT_DISCOVERY",
+    "SERVICE_DETECTION"
+   ],
+   "failed_actions": [],
+   "previous_observations": []
+  },
+  "expected_profiles": [
+   "UNKNOWN"
+  ],
+  "expected_capabilities": [
+   "OPERATING_SYSTEM_IDENTIFICATION"
+  ]
+ },
+ {
+  "id": "ho_linux_identified_all_done",
+  "description": "Linux host fully enumerated -> stop",
+  "evidence": {
+   "target": "198.51.100.31",
+   "authorized_scope": true,
+   "target_type": "host",
+   "reachable": true,
+   "open_ports": [
+    22
+   ],
+   "services": [
+    "ssh"
+   ],
+   "technologies": [
+    "OpenSSH 8.9"
+   ],
+   "completed_actions": [
+    "HOST_DISCOVERY",
+    "PORT_DISCOVERY",
+    "SERVICE_DETECTION",
+    "OPERATING_SYSTEM_IDENTIFICATION"
+   ],
+   "failed_actions": [],
+   "previous_observations": [],
+   "os_detected": "Linux 5.15 (Debian)"
+  },
+  "expected_profiles": [
+   "LINUX_HOST"
+  ],
+  "expected_capabilities": [
+   "STOP_NO_RELEVANT_ACTION"
+  ]
+ },
+ {
+  "id": "ho_unreachable_host",
+  "description": "Host unreachable despite multiple attempts",
+  "evidence": {
+   "target": "203.0.113.99",
+   "authorized_scope": true,
+   "target_type": "host",
+   "reachable": false,
+   "open_ports": [],
+   "services": [],
+   "technologies": [],
+   "completed_actions": [
+    "HOST_DISCOVERY"
+   ],
+   "failed_actions": [
+    "HOST_DISCOVERY"
+   ],
+   "previous_observations": [
+    "Host discovery: no response to 3 attempts"
+   ]
+  },
+  "expected_profiles": [
+   "UNREACHABLE"
+  ],
+  "expected_capabilities": [
+   "REQUEST_ADDITIONAL_EVIDENCE"
+  ]
+ },
+ {
+  "id": "ho_dead_end_domain",
+  "description": "Domain unreachable, evidence exhausted -> stop",
+  "evidence": {
+   "target": "parked.acme-lab.test",
+   "authorized_scope": true,
+   "target_type": "domain",
+   "reachable": null,
+   "open_ports": [],
+   "services": [],
+   "technologies": [],
+   "completed_actions": [
+    "PASSIVE_ASSET_DISCOVERY",
+    "SUBDOMAIN_DISCOVERY",
+    "DNS_RESOLUTION"
+   ],
+   "failed_actions": [],
+   "previous_observations": [],
+   "zero_findings_actions": [
+    "PASSIVE_ASSET_DISCOVERY",
+    "SUBDOMAIN_DISCOVERY",
+    "DNS_RESOLUTION"
+   ]
+  },
+  "expected_profiles": [
+   "UNREACHABLE"
+  ],
+  "expected_capabilities": [
+   "STOP_NO_RELEVANT_ACTION"
+  ]
+ },
+ {
+  "id": "ho_oos_web_rich",
+  "description": "Rich web surface but explicitly out of scope -> block",
+  "evidence": {
+   "target": "not-in-scope.acme.test",
+   "authorized_scope": false,
+   "target_type": "domain",
+   "reachable": true,
+   "open_ports": [
+    80,
+    443
+   ],
+   "services": [
+    "http",
+    "https"
+   ],
+   "technologies": [
+    "Nginx",
+    "PHP"
+   ],
+   "completed_actions": [],
+   "failed_actions": [],
+   "previous_observations": []
+  },
+  "expected_profiles": [
+   "OUT_OF_SCOPE",
+   "WEB_APPLICATION",
+   "DOMAIN"
+  ],
+  "expected_capabilities": [
+   "BLOCK_EXECUTION"
+  ]
+ },
+ {
+  "id": "ho_unknown_scope_api",
+  "description": "API surface present but authorization status unknown -> verify",
+  "evidence": {
+   "target": "maybe-ours.acme.test",
+   "authorized_scope": null,
+   "target_type": "domain",
+   "reachable": true,
+   "open_ports": [
+    443
+   ],
+   "services": [
+    "https"
+   ],
+   "technologies": [],
+   "completed_actions": [],
+   "failed_actions": [],
+   "previous_observations": [
+    "OpenAPI document visible"
+   ]
+  },
+  "expected_profiles": [
+   "UNKNOWN"
+  ],
+  "expected_capabilities": [
+   "VERIFY_SCOPE"
+  ]
+ },
+ {
+  "id": "ho_unknown_scope_host",
+  "description": "Alive host but no scope confirmation on file -> verify",
+  "evidence": {
+   "target": "203.0.113.201",
+   "authorized_scope": null,
+   "target_type": "host",
+   "reachable": true,
+   "open_ports": [
+    80
+   ],
+   "services": [
+    "http"
+   ],
+   "technologies": [],
+   "completed_actions": [],
+   "failed_actions": [],
+   "previous_observations": []
+  },
+  "expected_profiles": [
+   "UNKNOWN",
+   "WEB_APPLICATION"
+  ],
+  "expected_capabilities": [
+   "VERIFY_SCOPE"
+  ]
+ },
+ {
+  "id": "ho_passive_done_subdomains_pending",
+  "description": "Passive asset discovery complete, subdomain enumeration pending",
+  "evidence": {
+   "target": "acme-lab.test",
+   "authorized_scope": true,
+   "target_type": "domain",
+   "reachable": true,
+   "open_ports": [],
+   "services": [],
+   "technologies": [],
+   "completed_actions": [
+    "PASSIVE_ASSET_DISCOVERY"
+   ],
+   "failed_actions": [],
+   "previous_observations": [
+    "Passive discovery: 3 historical assets"
+   ]
+  },
+  "expected_profiles": [
+   "DOMAIN"
+  ],
+  "expected_capabilities": [
+   "SUBDOMAIN_DISCOVERY",
+   "DNS_RESOLUTION"
+  ]
+ },
+ {
+  "id": "ho_subdomains_exhausted",
+  "description": "Subdomain enumeration exhausted, nothing new -> stop",
+  "evidence": {
+   "target": "bigcorp-lab.test",
+   "authorized_scope": true,
+   "target_type": "domain",
+   "reachable": true,
+   "open_ports": [
+    443
+   ],
+   "services": [
+    "https"
+   ],
+   "technologies": [
+    "Cloudflare"
+   ],
+   "completed_actions": [
+    "PASSIVE_ASSET_DISCOVERY",
+    "SUBDOMAIN_DISCOVERY",
+    "DNS_RESOLUTION",
+    "PORT_DISCOVERY",
+    "SERVICE_DETECTION",
+    "WEB_PROBING",
+    "WEB_TECHNOLOGY_DISCOVERY",
+    "TLS_ANALYSIS",
+    "SCREENSHOT_CAPTURE"
+   ],
+   "failed_actions": [],
+   "previous_observations": [],
+   "resolved_ip": "203.0.113.7",
+   "subdomain_resolutions": {
+    "vpn.bigcorp-lab.test": "198.51.100.30"
+   },
+   "subtarget_results": {
+    "vpn.bigcorp-lab.test": {
+     "open_ports": [
+      443
+     ]
+    }
+   },
+   "subdomains_exhausted": true,
+   "active_subtarget": null
+  },
+  "expected_profiles": [
+   "WEB_APPLICATION",
+   "DOMAIN"
+  ],
+  "expected_capabilities": [
+   "STOP_NO_RELEVANT_ACTION"
+  ]
+ },
+ {
+  "id": "ho_subtarget_done_return",
+  "description": "Work on the sub-target finished -> return from subdomain",
+  "evidence": {
+   "target": "staging.acme-lab.test",
+   "authorized_scope": true,
+   "target_type": "domain",
+   "reachable": true,
+   "open_ports": [
+    443
+   ],
+   "services": [
+    "https"
+   ],
+   "technologies": [
+    "Nginx"
+   ],
+   "completed_actions": [
+    "PORT_DISCOVERY",
+    "SERVICE_DETECTION",
+    "WEB_PROBING",
+    "WEB_TECHNOLOGY_DISCOVERY",
+    "TLS_ANALYSIS",
+    "HEADER_ANALYSIS",
+    "CONTENT_DISCOVERY",
+    "PARAMETER_DISCOVERY",
+    "SCREENSHOT_CAPTURE"
+   ],
+   "failed_actions": [],
+   "previous_observations": [],
+   "active_subtarget": "staging.acme-lab.test",
+   "subtarget_parent": "acme-lab.test"
+  },
+  "expected_profiles": [
+   "WEB_APPLICATION"
+  ],
+  "expected_capabilities": [
+   "RETURN_FROM_SUBDOMAIN",
+   "STOP_NO_RELEVANT_ACTION"
+  ]
+ },
+ {
+  "id": "ho_creds_supplied_web",
+  "description": "Authorized credentials supplied, app not yet explored",
+  "evidence": {
+   "target": "intranet.acme-lab.test",
+   "authorized_scope": true,
+   "target_type": "domain",
+   "reachable": true,
+   "open_ports": [
+    443
+   ],
+   "services": [
+    "https"
+   ],
+   "technologies": [
+    "Nginx"
+   ],
+   "completed_actions": [
+    "PORT_DISCOVERY",
+    "SERVICE_DETECTION",
+    "WEB_TECHNOLOGY_DISCOVERY"
+   ],
+   "failed_actions": [],
+   "previous_observations": [],
+   "credentials": {
+    "source": "authorized engagement",
+    "username": "pentest",
+    "password": "***"
+   }
+  },
+  "expected_profiles": [
+   "AUTHENTICATED_WEB_APPLICATION",
+   "WEB_APPLICATION"
+  ],
+  "expected_capabilities": [
+   "HEADER_ANALYSIS",
+   "CONTENT_DISCOVERY",
+   "PARAMETER_DISCOVERY",
+   "WEB_CRAWLING"
+  ]
+ },
+ {
+  "id": "ho_auth_required_no_creds",
+  "description": "Login required, no credentials on file",
+  "evidence": {
+   "target": "portal2.acme-lab.test",
+   "authorized_scope": true,
+   "target_type": "domain",
+   "reachable": true,
+   "open_ports": [
+    443
+   ],
+   "services": [
+    "https"
+   ],
+   "technologies": [],
+   "completed_actions": [
+    "PORT_DISCOVERY",
+    "SERVICE_DETECTION"
+   ],
+   "failed_actions": [],
+   "previous_observations": [
+    "Web probing: / redirects to SSO login"
+   ],
+   "auth_required": true,
+   "approved_credentials_supplied": false
+  },
+  "expected_profiles": [
+   "AUTHENTICATED_WEB_APPLICATION",
+   "WEB_APPLICATION"
+  ],
+  "expected_capabilities": [
+   "REQUEST_AUTHORIZED_CREDENTIALS",
+   "WEB_PROBING",
+   "WEB_TECHNOLOGY_DISCOVERY"
+  ]
+ },
+ {
+  "id": "ho_zero_findings_probing",
+  "description": "Web probing returned zero findings; must not repeat it",
+  "evidence": {
+   "target": "static.acme-lab.test",
+   "authorized_scope": true,
+   "target_type": "domain",
+   "reachable": true,
+   "open_ports": [
+    80
+   ],
+   "services": [
+    "http"
+   ],
+   "technologies": [
+    "Apache"
+   ],
+   "completed_actions": [
+    "PORT_DISCOVERY",
+    "SERVICE_DETECTION",
+    "WEB_PROBING",
+    "WEB_TECHNOLOGY_DISCOVERY",
+    "HEADER_ANALYSIS",
+    "CONTENT_DISCOVERY"
+   ],
+   "failed_actions": [],
+   "previous_observations": [],
+   "zero_findings_actions": [
+    "CONTENT_DISCOVERY"
+   ]
+  },
+  "expected_profiles": [
+   "WEB_APPLICATION"
+  ],
+  "expected_capabilities": [
+   "PARAMETER_DISCOVERY",
+   "SCREENSHOT_CAPTURE",
+   "WEB_CRAWLING"
+  ]
+ },
+ {
+  "id": "ho_chronic_crawl_failures",
+  "description": "Crawling failed 4 times on this target; pick another capability",
+  "evidence": {
+   "target": "flaky.acme-lab.test",
+   "authorized_scope": true,
+   "target_type": "domain",
+   "reachable": true,
+   "open_ports": [
+    80
+   ],
+   "services": [
+    "http"
+   ],
+   "technologies": [
+    "Apache"
+   ],
+   "completed_actions": [
+    "PORT_DISCOVERY",
+    "SERVICE_DETECTION",
+    "WEB_PROBING",
+    "WEB_TECHNOLOGY_DISCOVERY",
+    "HEADER_ANALYSIS"
+   ],
+   "failed_actions": [],
+   "previous_observations": [],
+   "failure_patterns": {
+    "CONTENT_DISCOVERY": {
+     "count": 3,
+     "errors": [
+      "timeout",
+      "timeout",
+      "timeout"
+     ],
+     "targets_tested": [
+      "a",
+      "b",
+      "c"
+     ]
+    }
+   }
+  },
+  "expected_profiles": [
+   "WEB_APPLICATION"
+  ],
+  "expected_capabilities": [
+   "PARAMETER_DISCOVERY",
+   "WEB_CRAWLING",
+   "SCREENSHOT_CAPTURE"
+  ]
+ },
+ {
+  "id": "ho_no_repeat_portscan",
+  "description": "Port discovery already completed; do not re-select it",
+  "evidence": {
+   "target": "192.0.2.87",
+   "authorized_scope": true,
+   "target_type": "host",
+   "reachable": true,
+   "open_ports": [
+    22,
+    443
+   ],
+   "services": [],
+   "technologies": [],
+   "completed_actions": [
+    "PORT_DISCOVERY"
+   ],
+   "failed_actions": [],
+   "previous_observations": []
+  },
+  "expected_profiles": [
+   "UNKNOWN"
+  ],
+  "expected_capabilities": [
+   "SERVICE_DETECTION"
+  ]
+ },
+ {
+  "id": "ho_many_completed_cms_pending",
+  "description": "Extensive history, CMS assessment still outstanding",
+  "evidence": {
+   "target": "cms.acme-lab.test",
+   "authorized_scope": true,
+   "target_type": "domain",
+   "reachable": true,
+   "open_ports": [
+    80,
+    443
+   ],
+   "services": [
+    "http",
+    "https"
+   ],
+   "technologies": [
+    "WordPress"
+   ],
+   "completed_actions": [
+    "PORT_DISCOVERY",
+    "SERVICE_DETECTION",
+    "WEB_TECHNOLOGY_DISCOVERY",
+    "WEB_CRAWLING",
+    "PARAMETER_DISCOVERY",
+    "WEB_PROBING",
+    "JAVASCRIPT_ANALYSIS",
+    "SCREENSHOT_CAPTURE",
+    "HEADER_ANALYSIS",
+    "CMS_IDENTIFICATION"
+   ],
+   "failed_actions": [],
+   "previous_observations": [
+    "CMS identification: WordPress 6.4"
+   ]
+  },
+  "expected_profiles": [
+   "CMS"
+  ],
+  "expected_capabilities": [
+   "CMS_ASSESSMENT"
+  ]
+ }
+]

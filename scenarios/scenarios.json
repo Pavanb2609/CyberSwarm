@@ -1,0 +1,1893 @@
+[
+  {
+    "id": "unknown_scope",
+    "description": "Authorization status unknown -> must verify scope first",
+    "evidence": {
+      "target": "unknown-target.example",
+      "authorized_scope": null,
+      "target_type": "domain",
+      "reachable": null,
+      "open_ports": [],
+      "services": [],
+      "technologies": [],
+      "completed_actions": [],
+      "failed_actions": [],
+      "previous_observations": []
+    },
+    "expected_profiles": [
+      "UNKNOWN",
+      "DOMAIN"
+    ],
+    "expected_capabilities": [
+      "VERIFY_SCOPE"
+    ]
+  },
+  {
+    "id": "explicit_out_of_scope",
+    "description": "authorized_scope explicitly false -> must block",
+    "evidence": {
+      "target": "not-my-client.com",
+      "authorized_scope": false,
+      "target_type": "domain",
+      "reachable": true,
+      "open_ports": [
+        80
+      ],
+      "services": [
+        "http"
+      ],
+      "technologies": [],
+      "completed_actions": [],
+      "failed_actions": [],
+      "previous_observations": []
+    },
+    "expected_profiles": [
+      "OUT_OF_SCOPE",
+      "DOMAIN"
+    ],
+    "expected_capabilities": [
+      "BLOCK_EXECUTION"
+    ]
+  },
+  {
+    "id": "fresh_domain_no_assets",
+    "description": "Authorized domain, nothing enumerated yet -> passive/subdomain discovery",
+    "evidence": {
+      "target": "clientcorp.com",
+      "authorized_scope": true,
+      "target_type": "domain",
+      "reachable": null,
+      "open_ports": [],
+      "services": [],
+      "technologies": [],
+      "completed_actions": [],
+      "failed_actions": [],
+      "previous_observations": []
+    },
+    "expected_profiles": [
+      "DOMAIN"
+    ],
+    "expected_capabilities": [
+      "PASSIVE_ASSET_DISCOVERY"
+    ]
+  },
+  {
+    "id": "host_reachable_ports_unknown",
+    "description": "Reachable host, ports not yet scanned -> port discovery",
+    "evidence": {
+      "target": "10.10.10.25",
+      "authorized_scope": true,
+      "target_type": "host",
+      "reachable": true,
+      "open_ports": [],
+      "services": [],
+      "technologies": [],
+      "completed_actions": [
+        "HOST_DISCOVERY"
+      ],
+      "failed_actions": [],
+      "previous_observations": []
+    },
+    "expected_profiles": [
+      "UNKNOWN"
+    ],
+    "expected_capabilities": [
+      "PORT_DISCOVERY"
+    ]
+  },
+  {
+    "id": "ports_known_services_unknown",
+    "description": "Ports open, services not identified -> service detection",
+    "evidence": {
+      "target": "10.10.10.25",
+      "authorized_scope": true,
+      "target_type": "host",
+      "reachable": true,
+      "open_ports": [
+        22,
+        80,
+        443
+      ],
+      "services": [],
+      "technologies": [],
+      "completed_actions": [
+        "HOST_DISCOVERY",
+        "PORT_DISCOVERY"
+      ],
+      "failed_actions": [],
+      "previous_observations": []
+    },
+    "expected_profiles": [
+      "UNKNOWN"
+    ],
+    "expected_capabilities": [
+      "SERVICE_DETECTION"
+    ]
+  },
+  {
+    "id": "web_app_needs_tech_discovery",
+    "description": "Apache/PHP known but no detailed tech profile -> web technology discovery",
+    "evidence": {
+      "target": "lab.local",
+      "authorized_scope": true,
+      "target_type": "domain",
+      "reachable": true,
+      "open_ports": [
+        80,
+        443
+      ],
+      "services": [
+        "http",
+        "https"
+      ],
+      "technologies": [
+        "Apache",
+        "PHP"
+      ],
+      "completed_actions": [
+        "PORT_DISCOVERY",
+        "SERVICE_DETECTION"
+      ],
+      "failed_actions": [],
+      "previous_observations": []
+    },
+    "expected_profiles": [
+      "WEB_APPLICATION"
+    ],
+    "expected_capabilities": [
+      "WEB_TECHNOLOGY_DISCOVERY",
+      "WEB_PROBING"
+    ],
+    "rule": "web reachable, stack not profiled (probing also valid: no HTTP metadata yet)"
+  },
+  {
+    "id": "wordpress_detected",
+    "description": "WordPress fingerprint present -> classify as CMS, run CMS identification",
+    "evidence": {
+      "target": "blog.clientcorp.com",
+      "authorized_scope": true,
+      "target_type": "domain",
+      "reachable": true,
+      "open_ports": [
+        80,
+        443
+      ],
+      "services": [
+        "http",
+        "https"
+      ],
+      "technologies": [
+        "WordPress",
+        "Nginx"
+      ],
+      "completed_actions": [
+        "PORT_DISCOVERY",
+        "SERVICE_DETECTION",
+        "WEB_TECHNOLOGY_DISCOVERY"
+      ],
+      "failed_actions": [],
+      "previous_observations": [
+        "wp-login.php found at /wp-login.php"
+      ]
+    },
+    "expected_profiles": [
+      "CMS"
+    ],
+    "expected_capabilities": [
+      "CMS_IDENTIFICATION",
+      "CMS_ASSESSMENT"
+    ],
+    "rule": "TECH FOLLOW-UP: WordPress -> CMS_ASSESSMENT (identification also valid)"
+  },
+  {
+    "id": "openapi_detected",
+    "description": "Swagger/OpenAPI spec found -> classify REST_API, run API endpoint discovery",
+    "evidence": {
+      "target": "api.clientcorp.com",
+      "authorized_scope": true,
+      "target_type": "domain",
+      "reachable": true,
+      "open_ports": [
+        443
+      ],
+      "services": [
+        "https"
+      ],
+      "technologies": [
+        "Swagger UI",
+        "Node.js"
+      ],
+      "completed_actions": [
+        "PORT_DISCOVERY",
+        "SERVICE_DETECTION",
+        "WEB_TECHNOLOGY_DISCOVERY"
+      ],
+      "failed_actions": [],
+      "previous_observations": [
+        "/swagger.json accessible"
+      ]
+    },
+    "expected_profiles": [
+      "REST_API"
+    ],
+    "expected_capabilities": [
+      "API_ENDPOINT_DISCOVERY"
+    ]
+  },
+  {
+    "id": "graphql_detected",
+    "description": "GraphQL endpoint found -> classify GRAPHQL_API",
+    "evidence": {
+      "target": "gql.clientcorp.com",
+      "authorized_scope": true,
+      "target_type": "domain",
+      "reachable": true,
+      "open_ports": [
+        443
+      ],
+      "services": [
+        "https"
+      ],
+      "technologies": [
+        "GraphQL",
+        "Apollo Server"
+      ],
+      "completed_actions": [
+        "PORT_DISCOVERY",
+        "SERVICE_DETECTION",
+        "WEB_TECHNOLOGY_DISCOVERY"
+      ],
+      "failed_actions": [],
+      "previous_observations": [
+        "/graphql endpoint responds to introspection query"
+      ]
+    },
+    "expected_profiles": [
+      "GRAPHQL_API"
+    ],
+    "expected_capabilities": [
+      "API_ENDPOINT_DISCOVERY"
+    ]
+  },
+  {
+    "id": "spa_react_detected",
+    "description": "React SPA detected -> javascript analysis",
+    "evidence": {
+      "target": "app.clientcorp.com",
+      "authorized_scope": true,
+      "target_type": "domain",
+      "reachable": true,
+      "open_ports": [
+        443
+      ],
+      "services": [
+        "https"
+      ],
+      "technologies": [
+        "React",
+        "Webpack"
+      ],
+      "completed_actions": [
+        "PORT_DISCOVERY",
+        "SERVICE_DETECTION",
+        "WEB_TECHNOLOGY_DISCOVERY"
+      ],
+      "failed_actions": [],
+      "previous_observations": [
+        "Bundled JS chunks identified"
+      ]
+    },
+    "expected_profiles": [
+      "SINGLE_PAGE_APPLICATION"
+    ],
+    "expected_capabilities": [
+      "JAVASCRIPT_ANALYSIS"
+    ]
+  },
+  {
+    "id": "active_directory_signals",
+    "description": "Kerberos + LDAP + SMB together -> classify Active Directory",
+    "evidence": {
+      "target": "dc01.corp.local",
+      "authorized_scope": true,
+      "target_type": "host",
+      "reachable": true,
+      "open_ports": [
+        88,
+        389,
+        445
+      ],
+      "services": [
+        "kerberos",
+        "ldap",
+        "smb"
+      ],
+      "technologies": [
+        "Windows Server"
+      ],
+      "completed_actions": [
+        "PORT_DISCOVERY",
+        "SERVICE_DETECTION"
+      ],
+      "failed_actions": [],
+      "previous_observations": []
+    },
+    "expected_profiles": [
+      "ACTIVE_DIRECTORY"
+    ],
+    "expected_capabilities": [
+      "DIRECTORY_SERVICE_ENUMERATION"
+    ]
+  },
+  {
+    "id": "auth_required_no_creds",
+    "description": "Authenticated web app, no approved credentials supplied",
+    "evidence": {
+      "target": "portal.clientcorp.com",
+      "authorized_scope": true,
+      "target_type": "domain",
+      "reachable": true,
+      "open_ports": [
+        443
+      ],
+      "services": [
+        "https"
+      ],
+      "technologies": [
+        "Apache Tomcat"
+      ],
+      "auth_required": true,
+      "approved_credentials_supplied": false,
+      "completed_actions": [
+        "PORT_DISCOVERY",
+        "SERVICE_DETECTION",
+        "WEB_TECHNOLOGY_DISCOVERY"
+      ],
+      "failed_actions": [],
+      "previous_observations": [
+        "Login form present at /login"
+      ]
+    },
+    "expected_profiles": [
+      "AUTHENTICATED_WEB_APPLICATION",
+      "WEB_APPLICATION"
+    ],
+    "expected_capabilities": [
+      "REQUEST_AUTHORIZED_CREDENTIALS"
+    ]
+  },
+  {
+    "id": "duplicate_action_guard",
+    "description": "Preferred action already completed -> must not repeat, must pick a different supported action",
+    "evidence": {
+      "target": "clientcorp.com",
+      "authorized_scope": true,
+      "target_type": "domain",
+      "reachable": true,
+      "open_ports": [
+        80,
+        443
+      ],
+      "services": [
+        "http",
+        "https"
+      ],
+      "technologies": [
+        "Apache",
+        "PHP"
+      ],
+      "completed_actions": [
+        "PORT_DISCOVERY",
+        "SERVICE_DETECTION",
+        "WEB_TECHNOLOGY_DISCOVERY"
+      ],
+      "failed_actions": [],
+      "previous_observations": [
+        "Technology stack already profiled"
+      ]
+    },
+    "expected_profiles": [
+      "WEB_APPLICATION"
+    ],
+    "expected_capabilities": [
+      "CONTENT_DISCOVERY",
+      "WEB_PROBING",
+      "PARAMETER_DISCOVERY",
+      "JAVASCRIPT_ANALYSIS",
+      "SCREENSHOT_CAPTURE"
+    ]
+  },
+  {
+    "id": "nothing_left_to_do",
+    "description": "All relevant recon exhausted -> stop, no relevant action",
+    "evidence": {
+      "target": "clientcorp.com",
+      "authorized_scope": true,
+      "target_type": "domain",
+      "reachable": true,
+      "open_ports": [
+        80,
+        443
+      ],
+      "services": [
+        "http",
+        "https"
+      ],
+      "technologies": [
+        "Apache",
+        "PHP"
+      ],
+      "completed_actions": [
+        "PASSIVE_ASSET_DISCOVERY",
+        "SUBDOMAIN_DISCOVERY",
+        "HOST_DISCOVERY",
+        "PORT_DISCOVERY",
+        "SERVICE_DETECTION",
+        "WEB_PROBING",
+        "WEB_TECHNOLOGY_DISCOVERY",
+        "CONTENT_DISCOVERY",
+        "PARAMETER_DISCOVERY",
+        "JAVASCRIPT_ANALYSIS",
+        "SCREENSHOT_CAPTURE",
+        "TLS_ANALYSIS",
+        "HEADER_ANALYSIS"
+      ],
+      "failed_actions": [],
+      "previous_observations": [
+        "Comprehensive recon already performed"
+      ]
+    },
+    "expected_profiles": [
+      "WEB_APPLICATION",
+      "DOMAIN"
+    ],
+    "expected_capabilities": [
+      "STOP_NO_RELEVANT_ACTION"
+    ],
+    "rule": "all recon incl. mandatory TLS/HEADER done -> STOP (was contradicting TLS guardrail)"
+  },
+  {
+    "id": "unreachable_host",
+    "description": "Host confirmed unreachable -> classify UNREACHABLE, request more evidence",
+    "evidence": {
+      "target": "192.0.2.55",
+      "authorized_scope": true,
+      "target_type": "host",
+      "reachable": false,
+      "open_ports": [],
+      "services": [],
+      "technologies": [],
+      "completed_actions": [
+        "HOST_DISCOVERY"
+      ],
+      "failed_actions": [
+        "PORT_DISCOVERY"
+      ],
+      "previous_observations": [
+        "No response to ICMP or TCP probes"
+      ]
+    },
+    "expected_profiles": [
+      "UNREACHABLE"
+    ],
+    "expected_capabilities": [
+      "REQUEST_ADDITIONAL_EVIDENCE"
+    ]
+  },
+  {
+    "id": "scope_false_rich_evidence",
+    "description": "Out of scope even though lots of evidence exists",
+    "evidence": {
+      "target": "partner.example",
+      "authorized_scope": false,
+      "target_type": "domain",
+      "reachable": true,
+      "open_ports": [
+        80,
+        443
+      ],
+      "services": [
+        "http",
+        "https"
+      ],
+      "technologies": [
+        "Nginx"
+      ],
+      "completed_actions": [
+        "PORT_DISCOVERY",
+        "SERVICE_DETECTION",
+        "WEB_PROBING",
+        "WEB_TECHNOLOGY_DISCOVERY"
+      ],
+      "failed_actions": [],
+      "previous_observations": []
+    },
+    "expected_profiles": [
+      "OUT_OF_SCOPE",
+      "WEB_APPLICATION",
+      "DOMAIN"
+    ],
+    "expected_capabilities": [
+      "BLOCK_EXECUTION"
+    ],
+    "rule": "authorized_scope false -> BLOCK_EXECUTION"
+  },
+  {
+    "id": "scope_unknown_host",
+    "description": "Host with open ports but unknown authorization",
+    "evidence": {
+      "target": "10.20.30.40",
+      "authorized_scope": null,
+      "target_type": "host",
+      "reachable": true,
+      "open_ports": [
+        22,
+        80
+      ],
+      "services": [
+        "ssh",
+        "http"
+      ],
+      "technologies": [],
+      "completed_actions": [
+        "PORT_DISCOVERY"
+      ],
+      "failed_actions": [],
+      "previous_observations": []
+    },
+    "expected_profiles": [
+      "UNKNOWN",
+      "WEB_APPLICATION"
+    ],
+    "expected_capabilities": [
+      "VERIFY_SCOPE"
+    ],
+    "rule": "authorization unknown -> VERIFY_SCOPE"
+  },
+  {
+    "id": "dead_end_domain",
+    "description": "Passive, subdomain and DNS discovery all ran and found nothing",
+    "evidence": {
+      "target": "ghost-domain.example",
+      "authorized_scope": true,
+      "target_type": "domain",
+      "reachable": null,
+      "open_ports": [],
+      "services": [],
+      "technologies": [],
+      "completed_actions": [
+        "PASSIVE_ASSET_DISCOVERY",
+        "SUBDOMAIN_DISCOVERY",
+        "DNS_RESOLUTION"
+      ],
+      "failed_actions": [],
+      "previous_observations": [],
+      "zero_findings_actions": [
+        "PASSIVE_ASSET_DISCOVERY",
+        "SUBDOMAIN_DISCOVERY",
+        "DNS_RESOLUTION"
+      ]
+    },
+    "expected_profiles": [
+      "UNREACHABLE"
+    ],
+    "expected_capabilities": [
+      "STOP_NO_RELEVANT_ACTION"
+    ],
+    "rule": "DEAD-END DOMAIN DETECTION -> STOP with UNREACHABLE"
+  },
+  {
+    "id": "passive_done_subdomain_pending",
+    "description": "Passive discovery done, subdomain discovery not yet",
+    "evidence": {
+      "target": "clientcorp.com",
+      "authorized_scope": true,
+      "target_type": "domain",
+      "reachable": null,
+      "open_ports": [],
+      "services": [],
+      "technologies": [],
+      "completed_actions": [
+        "PASSIVE_ASSET_DISCOVERY"
+      ],
+      "failed_actions": [],
+      "previous_observations": []
+    },
+    "expected_profiles": [
+      "DOMAIN"
+    ],
+    "expected_capabilities": [
+      "SUBDOMAIN_DISCOVERY",
+      "DNS_RESOLUTION"
+    ],
+    "rule": "fresh domain -> PASSIVE or SUBDOMAIN; passive done"
+  },
+  {
+    "id": "passive_and_subdomains_done",
+    "description": "Subdomains found, domain not resolved yet",
+    "evidence": {
+      "target": "clientcorp.com",
+      "authorized_scope": true,
+      "target_type": "domain",
+      "reachable": null,
+      "open_ports": [],
+      "services": [],
+      "technologies": [],
+      "completed_actions": [
+        "PASSIVE_ASSET_DISCOVERY",
+        "SUBDOMAIN_DISCOVERY"
+      ],
+      "failed_actions": [],
+      "previous_observations": [],
+      "subdomains": [
+        "www.clientcorp.com",
+        "mail.clientcorp.com"
+      ]
+    },
+    "expected_profiles": [
+      "DOMAIN"
+    ],
+    "expected_capabilities": [
+      "DNS_RESOLUTION",
+      "HOST_DISCOVERY"
+    ],
+    "rule": "priority 3 DNS discovery/resolution, then host discovery"
+  },
+  {
+    "id": "subdomains_empty_host_unknown",
+    "description": "Subdomain discovery empty, DNS resolved, host status unknown",
+    "evidence": {
+      "target": "smallcorp.com",
+      "authorized_scope": true,
+      "target_type": "domain",
+      "reachable": null,
+      "open_ports": [],
+      "services": [],
+      "technologies": [],
+      "completed_actions": [
+        "PASSIVE_ASSET_DISCOVERY",
+        "SUBDOMAIN_DISCOVERY",
+        "DNS_RESOLUTION"
+      ],
+      "failed_actions": [],
+      "previous_observations": [],
+      "zero_findings_actions": [
+        "SUBDOMAIN_DISCOVERY"
+      ],
+      "resolved_ip": "203.0.113.10"
+    },
+    "expected_profiles": [
+      "DOMAIN",
+      "UNKNOWN"
+    ],
+    "expected_capabilities": [
+      "HOST_DISCOVERY",
+      "PORT_DISCOVERY"
+    ],
+    "rule": "host unknown + subdomain discovery empty -> HOST_DISCOVERY"
+  },
+  {
+    "id": "host_discovery_failed",
+    "description": "Host discovery failed; nmap can still probe the IP",
+    "evidence": {
+      "target": "smallcorp.com",
+      "authorized_scope": true,
+      "target_type": "domain",
+      "reachable": null,
+      "open_ports": [],
+      "services": [],
+      "technologies": [],
+      "completed_actions": [
+        "PASSIVE_ASSET_DISCOVERY",
+        "SUBDOMAIN_DISCOVERY",
+        "DNS_RESOLUTION"
+      ],
+      "failed_actions": [
+        "HOST_DISCOVERY"
+      ],
+      "previous_observations": [],
+      "resolved_ip": "203.0.113.10"
+    },
+    "expected_profiles": [
+      "DOMAIN",
+      "UNKNOWN"
+    ],
+    "expected_capabilities": [
+      "PORT_DISCOVERY"
+    ],
+    "rule": "HOST_DISCOVERY unavailable -> PORT_DISCOVERY directly"
+  },
+  {
+    "id": "tls_pending_before_stop",
+    "description": "Everything done except TLS on an HTTPS target",
+    "evidence": {
+      "target": "shop.clientcorp.com",
+      "authorized_scope": true,
+      "target_type": "domain",
+      "reachable": true,
+      "open_ports": [
+        80,
+        443
+      ],
+      "services": [
+        "http",
+        "https"
+      ],
+      "technologies": [
+        "Nginx",
+        "PHP"
+      ],
+      "completed_actions": [
+        "PORT_DISCOVERY",
+        "SERVICE_DETECTION",
+        "WEB_PROBING",
+        "WEB_TECHNOLOGY_DISCOVERY",
+        "HEADER_ANALYSIS",
+        "CONTENT_DISCOVERY",
+        "PARAMETER_DISCOVERY",
+        "SCREENSHOT_CAPTURE"
+      ],
+      "failed_actions": [],
+      "previous_observations": []
+    },
+    "expected_profiles": [
+      "WEB_APPLICATION"
+    ],
+    "expected_capabilities": [
+      "TLS_ANALYSIS"
+    ],
+    "rule": "HTTPS TLS guardrail: no STOP while TLS outstanding"
+  },
+  {
+    "id": "header_pending_before_stop",
+    "description": "HTTP-only app, everything done except header analysis",
+    "evidence": {
+      "target": "intranet.clientcorp.com",
+      "authorized_scope": true,
+      "target_type": "domain",
+      "reachable": true,
+      "open_ports": [
+        80
+      ],
+      "services": [
+        "http"
+      ],
+      "technologies": [
+        "Apache"
+      ],
+      "completed_actions": [
+        "PORT_DISCOVERY",
+        "SERVICE_DETECTION",
+        "WEB_PROBING",
+        "WEB_TECHNOLOGY_DISCOVERY",
+        "CONTENT_DISCOVERY",
+        "PARAMETER_DISCOVERY",
+        "SCREENSHOT_CAPTURE"
+      ],
+      "failed_actions": [],
+      "previous_observations": []
+    },
+    "expected_profiles": [
+      "WEB_APPLICATION"
+    ],
+    "expected_capabilities": [
+      "HEADER_ANALYSIS"
+    ],
+    "rule": "web app + HEADER_ANALYSIS not completed after probing"
+  },
+  {
+    "id": "screenshot_pending_before_stop",
+    "description": "Content discovery done, screenshot not taken",
+    "evidence": {
+      "target": "intranet.clientcorp.com",
+      "authorized_scope": true,
+      "target_type": "domain",
+      "reachable": true,
+      "open_ports": [
+        80
+      ],
+      "services": [
+        "http"
+      ],
+      "technologies": [
+        "Apache"
+      ],
+      "completed_actions": [
+        "PORT_DISCOVERY",
+        "SERVICE_DETECTION",
+        "WEB_PROBING",
+        "WEB_TECHNOLOGY_DISCOVERY",
+        "HEADER_ANALYSIS",
+        "CONTENT_DISCOVERY",
+        "PARAMETER_DISCOVERY"
+      ],
+      "failed_actions": [],
+      "previous_observations": []
+    },
+    "expected_profiles": [
+      "WEB_APPLICATION"
+    ],
+    "expected_capabilities": [
+      "SCREENSHOT_CAPTURE"
+    ],
+    "rule": "web app: SCREENSHOT_CAPTURE before STOP, after CONTENT_DISCOVERY"
+  },
+  {
+    "id": "http_only_no_tls",
+    "description": "HTTP-only app fully reconned -- TLS must NOT be forced",
+    "evidence": {
+      "target": "intranet.clientcorp.com",
+      "authorized_scope": true,
+      "target_type": "domain",
+      "reachable": true,
+      "open_ports": [
+        80
+      ],
+      "services": [
+        "http"
+      ],
+      "technologies": [
+        "Apache"
+      ],
+      "completed_actions": [
+        "PORT_DISCOVERY",
+        "SERVICE_DETECTION",
+        "WEB_PROBING",
+        "WEB_TECHNOLOGY_DISCOVERY",
+        "HEADER_ANALYSIS",
+        "CONTENT_DISCOVERY",
+        "PARAMETER_DISCOVERY",
+        "SCREENSHOT_CAPTURE"
+      ],
+      "failed_actions": [],
+      "previous_observations": []
+    },
+    "expected_profiles": [
+      "WEB_APPLICATION"
+    ],
+    "expected_capabilities": [
+      "STOP_NO_RELEVANT_ACTION"
+    ],
+    "rule": "TLS guardrail applies only to HTTPS targets"
+  },
+  {
+    "id": "cdn_skip_content",
+    "description": "Behind CloudFront: skip content and header analysis",
+    "evidence": {
+      "target": "www.bigcorp.com",
+      "authorized_scope": true,
+      "target_type": "domain",
+      "reachable": true,
+      "open_ports": [
+        80,
+        443
+      ],
+      "services": [
+        "http",
+        "https"
+      ],
+      "technologies": [
+        "Amazon CloudFront",
+        "React"
+      ],
+      "completed_actions": [
+        "PASSIVE_ASSET_DISCOVERY",
+        "SUBDOMAIN_DISCOVERY",
+        "DNS_RESOLUTION",
+        "PORT_DISCOVERY",
+        "SERVICE_DETECTION",
+        "WEB_PROBING",
+        "WEB_TECHNOLOGY_DISCOVERY",
+        "TLS_ANALYSIS",
+        "JAVASCRIPT_ANALYSIS",
+        "WEB_CRAWLING"
+      ],
+      "failed_actions": [],
+      "previous_observations": []
+    },
+    "expected_profiles": [
+      "SINGLE_PAGE_APPLICATION",
+      "WEB_APPLICATION"
+    ],
+    "expected_capabilities": [
+      "SCREENSHOT_CAPTURE"
+    ],
+    "rule": "CDN detected -> skip CONTENT_DISCOVERY/HEADER_ANALYSIS; screenshot before stop"
+  },
+  {
+    "id": "wordpress_after_identification",
+    "description": "WordPress identified; assessment pending",
+    "evidence": {
+      "target": "blog.clientcorp.com",
+      "authorized_scope": true,
+      "target_type": "domain",
+      "reachable": true,
+      "open_ports": [
+        443
+      ],
+      "services": [
+        "https"
+      ],
+      "technologies": [
+        "WordPress",
+        "Nginx"
+      ],
+      "completed_actions": [
+        "PORT_DISCOVERY",
+        "SERVICE_DETECTION",
+        "WEB_PROBING",
+        "WEB_TECHNOLOGY_DISCOVERY",
+        "CMS_IDENTIFICATION"
+      ],
+      "failed_actions": [],
+      "previous_observations": [],
+      "cms_detected": "wordpress"
+    },
+    "expected_profiles": [
+      "CMS"
+    ],
+    "expected_capabilities": [
+      "CMS_ASSESSMENT"
+    ],
+    "rule": "TECH FOLLOW-UP: WordPress -> CMS_ASSESSMENT"
+  },
+  {
+    "id": "drupal_detected",
+    "description": "Drupal site, CMS not yet assessed",
+    "evidence": {
+      "target": "news.clientcorp.com",
+      "authorized_scope": true,
+      "target_type": "domain",
+      "reachable": true,
+      "open_ports": [
+        80,
+        443
+      ],
+      "services": [
+        "http",
+        "https"
+      ],
+      "technologies": [
+        "Drupal 10",
+        "Apache"
+      ],
+      "completed_actions": [
+        "PORT_DISCOVERY",
+        "SERVICE_DETECTION",
+        "WEB_PROBING",
+        "WEB_TECHNOLOGY_DISCOVERY"
+      ],
+      "failed_actions": [],
+      "previous_observations": []
+    },
+    "expected_profiles": [
+      "CMS"
+    ],
+    "expected_capabilities": [
+      "CMS_IDENTIFICATION",
+      "CMS_ASSESSMENT"
+    ],
+    "rule": "CMS detected -> classify CMS, prefer CMS_ASSESSMENT"
+  },
+  {
+    "id": "many_completed_prefer_targeted",
+    "description": ">10 completed actions, CMS assessment still pending",
+    "evidence": {
+      "target": "blog.clientcorp.com",
+      "authorized_scope": true,
+      "target_type": "domain",
+      "reachable": true,
+      "open_ports": [
+        80,
+        443
+      ],
+      "services": [
+        "http",
+        "https"
+      ],
+      "technologies": [
+        "WordPress"
+      ],
+      "completed_actions": [
+        "PASSIVE_ASSET_DISCOVERY",
+        "SUBDOMAIN_DISCOVERY",
+        "DNS_RESOLUTION",
+        "HOST_DISCOVERY",
+        "PORT_DISCOVERY",
+        "SERVICE_DETECTION",
+        "WEB_PROBING",
+        "WEB_TECHNOLOGY_DISCOVERY",
+        "CMS_IDENTIFICATION",
+        "TLS_ANALYSIS",
+        "HEADER_ANALYSIS"
+      ],
+      "failed_actions": [],
+      "previous_observations": [],
+      "cms_detected": "wordpress"
+    },
+    "expected_profiles": [
+      "CMS"
+    ],
+    "expected_capabilities": [
+      "CMS_ASSESSMENT"
+    ],
+    "rule": ">10 completed: prefer targeted high-value (CMS_ASSESSMENT) over broad enumeration"
+  },
+  {
+    "id": "openapi_after_api_discovery",
+    "description": "Swagger API endpoints already enumerated",
+    "evidence": {
+      "target": "api.clientcorp.com",
+      "authorized_scope": true,
+      "target_type": "domain",
+      "reachable": true,
+      "open_ports": [
+        443
+      ],
+      "services": [
+        "https"
+      ],
+      "technologies": [
+        "Swagger UI",
+        "Node.js"
+      ],
+      "completed_actions": [
+        "PORT_DISCOVERY",
+        "SERVICE_DETECTION",
+        "WEB_PROBING",
+        "WEB_TECHNOLOGY_DISCOVERY",
+        "API_ENDPOINT_DISCOVERY"
+      ],
+      "failed_actions": [],
+      "previous_observations": [
+        "/swagger.json accessible"
+      ]
+    },
+    "expected_profiles": [
+      "REST_API"
+    ],
+    "expected_capabilities": [
+      "PARAMETER_DISCOVERY"
+    ],
+    "rule": "TECH FOLLOW-UP: OpenAPI -> API_ENDPOINT_DISCOVERY then PARAMETER_DISCOVERY"
+  },
+  {
+    "id": "spa_after_js_analysis",
+    "description": "React SPA, JS already analysed",
+    "evidence": {
+      "target": "app.clientcorp.com",
+      "authorized_scope": true,
+      "target_type": "domain",
+      "reachable": true,
+      "open_ports": [
+        443
+      ],
+      "services": [
+        "https"
+      ],
+      "technologies": [
+        "React",
+        "Webpack"
+      ],
+      "completed_actions": [
+        "PORT_DISCOVERY",
+        "SERVICE_DETECTION",
+        "WEB_PROBING",
+        "WEB_TECHNOLOGY_DISCOVERY",
+        "JAVASCRIPT_ANALYSIS"
+      ],
+      "failed_actions": [],
+      "previous_observations": []
+    },
+    "expected_profiles": [
+      "SINGLE_PAGE_APPLICATION"
+    ],
+    "expected_capabilities": [
+      "WEB_CRAWLING"
+    ],
+    "rule": "TECH FOLLOW-UP: SPA -> JAVASCRIPT_ANALYSIS then WEB_CRAWLING"
+  },
+  {
+    "id": "vue_spa_detected",
+    "description": "Vue.js SPA, nothing analysed yet",
+    "evidence": {
+      "target": "dash.clientcorp.com",
+      "authorized_scope": true,
+      "target_type": "domain",
+      "reachable": true,
+      "open_ports": [
+        443
+      ],
+      "services": [
+        "https"
+      ],
+      "technologies": [
+        "Vue.js",
+        "Nginx"
+      ],
+      "completed_actions": [
+        "PORT_DISCOVERY",
+        "SERVICE_DETECTION",
+        "WEB_PROBING",
+        "WEB_TECHNOLOGY_DISCOVERY"
+      ],
+      "failed_actions": [],
+      "previous_observations": []
+    },
+    "expected_profiles": [
+      "SINGLE_PAGE_APPLICATION"
+    ],
+    "expected_capabilities": [
+      "JAVASCRIPT_ANALYSIS"
+    ],
+    "rule": "React/Angular/Vue -> SINGLE_PAGE_APPLICATION + JAVASCRIPT_ANALYSIS"
+  },
+  {
+    "id": "ad_after_ldap_enum",
+    "description": "Domain controller, LDAP enumerated, SMB pending",
+    "evidence": {
+      "target": "dc01.corp.local",
+      "authorized_scope": true,
+      "target_type": "host",
+      "reachable": true,
+      "open_ports": [
+        88,
+        389,
+        445
+      ],
+      "services": [
+        "kerberos",
+        "ldap",
+        "smb"
+      ],
+      "technologies": [
+        "Windows Server"
+      ],
+      "completed_actions": [
+        "PORT_DISCOVERY",
+        "SERVICE_DETECTION",
+        "DIRECTORY_SERVICE_ENUMERATION"
+      ],
+      "failed_actions": [],
+      "previous_observations": []
+    },
+    "expected_profiles": [
+      "ACTIVE_DIRECTORY"
+    ],
+    "expected_capabilities": [
+      "WINDOWS_SERVICE_ENUMERATION"
+    ],
+    "rule": "AD signals -> directory then Windows service enumeration"
+  },
+  {
+    "id": "smb_only_host",
+    "description": "File server with SMB only, no Kerberos/LDAP",
+    "evidence": {
+      "target": "10.10.10.50",
+      "authorized_scope": true,
+      "target_type": "host",
+      "reachable": true,
+      "open_ports": [
+        139,
+        445
+      ],
+      "services": [
+        "netbios-ssn",
+        "microsoft-ds"
+      ],
+      "technologies": [
+        "Samba 4.15"
+      ],
+      "completed_actions": [
+        "HOST_DISCOVERY",
+        "PORT_DISCOVERY",
+        "SERVICE_DETECTION"
+      ],
+      "failed_actions": [],
+      "previous_observations": []
+    },
+    "expected_profiles": [
+      "UNKNOWN",
+      "NETWORK"
+    ],
+    "expected_capabilities": [
+      "WINDOWS_SERVICE_ENUMERATION",
+      "OPERATING_SYSTEM_IDENTIFICATION"
+    ],
+    "rule": "SMB evidence allows WINDOWS_SERVICE_ENUMERATION; no OS evidence -> profile UNKNOWN"
+  },
+  {
+    "id": "ssh_only_no_os",
+    "description": "Only SSH open, no OS fingerprint yet",
+    "evidence": {
+      "target": "10.10.10.60",
+      "authorized_scope": true,
+      "target_type": "host",
+      "reachable": true,
+      "open_ports": [
+        22
+      ],
+      "services": [
+        "ssh"
+      ],
+      "technologies": [
+        "OpenSSH 8.9"
+      ],
+      "completed_actions": [
+        "HOST_DISCOVERY",
+        "PORT_DISCOVERY",
+        "SERVICE_DETECTION"
+      ],
+      "failed_actions": [],
+      "previous_observations": []
+    },
+    "expected_profiles": [
+      "UNKNOWN"
+    ],
+    "expected_capabilities": [
+      "OPERATING_SYSTEM_IDENTIFICATION"
+    ],
+    "rule": "no LINUX_HOST without direct OS evidence; OS identification is the supported next step"
+  },
+  {
+    "id": "linux_host_identified",
+    "description": "SSH-only host, OS identified, nothing else to do",
+    "evidence": {
+      "target": "10.10.10.60",
+      "authorized_scope": true,
+      "target_type": "host",
+      "reachable": true,
+      "open_ports": [
+        22
+      ],
+      "services": [
+        "ssh"
+      ],
+      "technologies": [
+        "OpenSSH 8.9"
+      ],
+      "completed_actions": [
+        "HOST_DISCOVERY",
+        "PORT_DISCOVERY",
+        "SERVICE_DETECTION",
+        "OPERATING_SYSTEM_IDENTIFICATION"
+      ],
+      "failed_actions": [],
+      "previous_observations": [],
+      "os_detected": "Linux 5.15 (Ubuntu)"
+    },
+    "expected_profiles": [
+      "LINUX_HOST"
+    ],
+    "expected_capabilities": [
+      "STOP_NO_RELEVANT_ACTION"
+    ],
+    "rule": "OS evidence present -> LINUX_HOST; no useful capability left -> STOP"
+  },
+  {
+    "id": "kubernetes_api_detected",
+    "description": "Kubernetes API server exposed",
+    "evidence": {
+      "target": "k8s.clientcorp.com",
+      "authorized_scope": true,
+      "target_type": "domain",
+      "reachable": true,
+      "open_ports": [
+        443,
+        6443
+      ],
+      "services": [
+        "https",
+        "kubernetes-api"
+      ],
+      "technologies": [
+        "Kubernetes API"
+      ],
+      "completed_actions": [
+        "PORT_DISCOVERY",
+        "SERVICE_DETECTION",
+        "WEB_PROBING",
+        "WEB_TECHNOLOGY_DISCOVERY"
+      ],
+      "failed_actions": [],
+      "previous_observations": []
+    },
+    "expected_profiles": [
+      "KUBERNETES",
+      "CONTAINER_PLATFORM"
+    ],
+    "expected_capabilities": [
+      "CONTAINER_DISCOVERY"
+    ],
+    "rule": "TECH FOLLOW-UP: Kubernetes/Docker API -> CONTAINER_DISCOVERY"
+  },
+  {
+    "id": "docker_api_detected",
+    "description": "Docker remote API on 2375",
+    "evidence": {
+      "target": "10.10.10.70",
+      "authorized_scope": true,
+      "target_type": "host",
+      "reachable": true,
+      "open_ports": [
+        2375
+      ],
+      "services": [
+        "docker"
+      ],
+      "technologies": [
+        "Docker Engine API"
+      ],
+      "completed_actions": [
+        "PORT_DISCOVERY",
+        "SERVICE_DETECTION"
+      ],
+      "failed_actions": [],
+      "previous_observations": []
+    },
+    "expected_profiles": [
+      "CONTAINER_PLATFORM"
+    ],
+    "expected_capabilities": [
+      "CONTAINER_DISCOVERY"
+    ],
+    "rule": "container-platform evidence -> CONTAINER_DISCOVERY"
+  },
+  {
+    "id": "cloud_storage_evidence",
+    "description": "Web app referencing an S3 bucket",
+    "evidence": {
+      "target": "media.clientcorp.com",
+      "authorized_scope": true,
+      "target_type": "domain",
+      "reachable": true,
+      "open_ports": [
+        443
+      ],
+      "services": [
+        "https"
+      ],
+      "technologies": [
+        "Amazon S3",
+        "Nginx"
+      ],
+      "completed_actions": [
+        "PORT_DISCOVERY",
+        "SERVICE_DETECTION",
+        "WEB_PROBING",
+        "WEB_TECHNOLOGY_DISCOVERY"
+      ],
+      "failed_actions": [],
+      "previous_observations": [
+        "HTML references https://clientcorp-media.s3.amazonaws.com/"
+      ]
+    },
+    "expected_profiles": [
+      "AWS_CLOUD",
+      "WEB_APPLICATION"
+    ],
+    "expected_capabilities": [
+      "CLOUD_ASSET_DISCOVERY"
+    ],
+    "rule": "cloud provider evidence (S3) -> CLOUD_ASSET_DISCOVERY allowed"
+  },
+  {
+    "id": "mqtt_iot_device",
+    "description": "MQTT broker on 1883",
+    "evidence": {
+      "target": "10.10.20.5",
+      "authorized_scope": true,
+      "target_type": "host",
+      "reachable": true,
+      "open_ports": [
+        1883
+      ],
+      "services": [
+        "mqtt"
+      ],
+      "technologies": [
+        "Mosquitto"
+      ],
+      "completed_actions": [
+        "PORT_DISCOVERY",
+        "SERVICE_DETECTION"
+      ],
+      "failed_actions": [],
+      "previous_observations": []
+    },
+    "expected_profiles": [
+      "IOT"
+    ],
+    "expected_capabilities": [
+      "IOT_SERVICE_IDENTIFICATION"
+    ],
+    "rule": "IoT protocol evidence (MQTT) -> IOT_SERVICE_IDENTIFICATION"
+  },
+  {
+    "id": "mail_server_detected",
+    "description": "Postfix mail server",
+    "evidence": {
+      "target": "mail.clientcorp.com",
+      "authorized_scope": true,
+      "target_type": "domain",
+      "reachable": true,
+      "open_ports": [
+        25,
+        587
+      ],
+      "services": [
+        "smtp",
+        "submission"
+      ],
+      "technologies": [
+        "Postfix"
+      ],
+      "completed_actions": [
+        "PORT_DISCOVERY",
+        "SERVICE_DETECTION"
+      ],
+      "failed_actions": [],
+      "previous_observations": []
+    },
+    "expected_profiles": [
+      "MAIL_INFRASTRUCTURE"
+    ],
+    "expected_capabilities": [
+      "DNS_ENUMERATION"
+    ],
+    "rule": "TECH FOLLOW-UP: mail server -> DNS_ENUMERATION"
+  },
+  {
+    "id": "grafana_detected",
+    "description": "Grafana dashboard exposed",
+    "evidence": {
+      "target": "grafana.clientcorp.com",
+      "authorized_scope": true,
+      "target_type": "domain",
+      "reachable": true,
+      "open_ports": [
+        3000
+      ],
+      "services": [
+        "http"
+      ],
+      "technologies": [
+        "Grafana 10.2"
+      ],
+      "completed_actions": [
+        "PORT_DISCOVERY",
+        "SERVICE_DETECTION",
+        "WEB_PROBING",
+        "WEB_TECHNOLOGY_DISCOVERY"
+      ],
+      "failed_actions": [],
+      "previous_observations": []
+    },
+    "expected_profiles": [
+      "WEB_APPLICATION"
+    ],
+    "expected_capabilities": [
+      "API_ENDPOINT_DISCOVERY"
+    ],
+    "rule": "TECH FOLLOW-UP: Grafana -> API_ENDPOINT_DISCOVERY"
+  },
+  {
+    "id": "auth_with_creds_supplied",
+    "description": "Login required, approved credentials already supplied",
+    "evidence": {
+      "target": "portal.clientcorp.com",
+      "authorized_scope": true,
+      "target_type": "domain",
+      "reachable": true,
+      "open_ports": [
+        443
+      ],
+      "services": [
+        "https"
+      ],
+      "technologies": [
+        "Apache Tomcat"
+      ],
+      "completed_actions": [
+        "PORT_DISCOVERY",
+        "SERVICE_DETECTION",
+        "WEB_PROBING",
+        "WEB_TECHNOLOGY_DISCOVERY"
+      ],
+      "failed_actions": [],
+      "previous_observations": [
+        "Login form at /login"
+      ],
+      "auth_required": true,
+      "approved_credentials_supplied": true
+    },
+    "expected_profiles": [
+      "AUTHENTICATED_WEB_APPLICATION",
+      "WEB_APPLICATION"
+    ],
+    "expected_capabilities": [
+      "HEADER_ANALYSIS",
+      "CONTENT_DISCOVERY",
+      "PARAMETER_DISCOVERY",
+      "WEB_CRAWLING"
+    ],
+    "rule": "credentials supplied -> do NOT request them; continue web recon"
+  },
+  {
+    "id": "auth_required_tech_unknown",
+    "description": "Login wall, stack not profiled yet",
+    "evidence": {
+      "target": "portal2.clientcorp.com",
+      "authorized_scope": true,
+      "target_type": "domain",
+      "reachable": true,
+      "open_ports": [
+        443
+      ],
+      "services": [
+        "https"
+      ],
+      "technologies": [],
+      "completed_actions": [
+        "PORT_DISCOVERY",
+        "SERVICE_DETECTION"
+      ],
+      "failed_actions": [],
+      "previous_observations": [],
+      "auth_required": true,
+      "approved_credentials_supplied": false
+    },
+    "expected_profiles": [
+      "AUTHENTICATED_WEB_APPLICATION",
+      "WEB_APPLICATION"
+    ],
+    "expected_capabilities": [
+      "REQUEST_AUTHORIZED_CREDENTIALS",
+      "WEB_PROBING",
+      "WEB_TECHNOLOGY_DISCOVERY"
+    ],
+    "rule": "auth required without creds -> request (probing/tech also defensible first)"
+  },
+  {
+    "id": "service_detection_failed",
+    "description": "Service detection failed, web ports open",
+    "evidence": {
+      "target": "legacy.clientcorp.com",
+      "authorized_scope": true,
+      "target_type": "domain",
+      "reachable": true,
+      "open_ports": [
+        80,
+        443
+      ],
+      "services": [],
+      "technologies": [],
+      "completed_actions": [
+        "PORT_DISCOVERY"
+      ],
+      "failed_actions": [
+        "SERVICE_DETECTION"
+      ],
+      "previous_observations": []
+    },
+    "expected_profiles": [
+      "UNKNOWN",
+      "WEB_APPLICATION"
+    ],
+    "expected_capabilities": [
+      "WEB_PROBING"
+    ],
+    "rule": "don't retry failed action; HTTP ports + no HTTP metadata -> WEB_PROBING"
+  },
+  {
+    "id": "zero_findings_content_no_retry",
+    "description": "Content discovery found nothing; must not retry it",
+    "evidence": {
+      "target": "intranet.clientcorp.com",
+      "authorized_scope": true,
+      "target_type": "domain",
+      "reachable": true,
+      "open_ports": [
+        80
+      ],
+      "services": [
+        "http"
+      ],
+      "technologies": [
+        "Apache"
+      ],
+      "completed_actions": [
+        "PORT_DISCOVERY",
+        "SERVICE_DETECTION",
+        "WEB_PROBING",
+        "WEB_TECHNOLOGY_DISCOVERY",
+        "HEADER_ANALYSIS",
+        "CONTENT_DISCOVERY"
+      ],
+      "failed_actions": [],
+      "previous_observations": [],
+      "zero_findings_actions": [
+        "CONTENT_DISCOVERY"
+      ]
+    },
+    "expected_profiles": [
+      "WEB_APPLICATION"
+    ],
+    "expected_capabilities": [
+      "PARAMETER_DISCOVERY",
+      "SCREENSHOT_CAPTURE",
+      "WEB_CRAWLING"
+    ],
+    "rule": "zero_findings_actions must not be reselected"
+  },
+  {
+    "id": "failure_pattern_skip",
+    "description": "Content discovery timed out 3+ times across targets",
+    "evidence": {
+      "target": "intranet2.clientcorp.com",
+      "authorized_scope": true,
+      "target_type": "domain",
+      "reachable": true,
+      "open_ports": [
+        80
+      ],
+      "services": [
+        "http"
+      ],
+      "technologies": [
+        "Apache"
+      ],
+      "completed_actions": [
+        "PORT_DISCOVERY",
+        "SERVICE_DETECTION",
+        "WEB_PROBING",
+        "WEB_TECHNOLOGY_DISCOVERY",
+        "HEADER_ANALYSIS"
+      ],
+      "failed_actions": [],
+      "previous_observations": [],
+      "failure_patterns": {
+        "CONTENT_DISCOVERY": {
+          "count": 3,
+          "errors": [
+            "timeout",
+            "timeout",
+            "timeout"
+          ],
+          "targets_tested": [
+            "a",
+            "b",
+            "c"
+          ]
+        }
+      }
+    },
+    "expected_profiles": [
+      "WEB_APPLICATION"
+    ],
+    "expected_capabilities": [
+      "PARAMETER_DISCOVERY",
+      "WEB_CRAWLING",
+      "SCREENSHOT_CAPTURE"
+    ],
+    "rule": "FAILURE PATTERN AVOIDANCE: 3+ failures -> do not select again"
+  },
+  {
+    "id": "pivot_to_different_ip",
+    "description": "Subdomain on a different public IP, main recon done",
+    "evidence": {
+      "target": "bigcorp.com",
+      "authorized_scope": true,
+      "target_type": "domain",
+      "reachable": true,
+      "open_ports": [
+        443
+      ],
+      "services": [
+        "https"
+      ],
+      "technologies": [
+        "Cloudflare"
+      ],
+      "completed_actions": [
+        "PASSIVE_ASSET_DISCOVERY",
+        "SUBDOMAIN_DISCOVERY",
+        "DNS_RESOLUTION",
+        "PORT_DISCOVERY",
+        "SERVICE_DETECTION",
+        "WEB_PROBING",
+        "WEB_TECHNOLOGY_DISCOVERY",
+        "TLS_ANALYSIS"
+      ],
+      "failed_actions": [],
+      "previous_observations": [],
+      "resolved_ip": "104.16.1.1",
+      "subdomains": [
+        "www.bigcorp.com",
+        "grafana.bigcorp.com",
+        "cdn.bigcorp.com"
+      ],
+      "subdomain_resolutions": {
+        "www.bigcorp.com": "104.16.1.1",
+        "grafana.bigcorp.com": "198.51.100.20",
+        "cdn.bigcorp.com": "104.16.1.1"
+      },
+      "active_subtarget": null,
+      "subtarget_results": {}
+    },
+    "expected_profiles": [
+      "WEB_APPLICATION",
+      "DOMAIN"
+    ],
+    "expected_capabilities": [
+      "PIVOT_TO_SUBDOMAIN"
+    ],
+    "rule": "reachable different-IP subdomain, no active subtarget -> PIVOT"
+  },
+  {
+    "id": "pivot_same_ip_only",
+    "description": "All subdomains on the same CDN IP -- no pivot",
+    "evidence": {
+      "target": "bigcorp2.com",
+      "authorized_scope": true,
+      "target_type": "domain",
+      "reachable": true,
+      "open_ports": [
+        443
+      ],
+      "services": [
+        "https"
+      ],
+      "technologies": [
+        "Cloudflare"
+      ],
+      "completed_actions": [
+        "PASSIVE_ASSET_DISCOVERY",
+        "SUBDOMAIN_DISCOVERY",
+        "DNS_RESOLUTION",
+        "PORT_DISCOVERY",
+        "SERVICE_DETECTION",
+        "WEB_PROBING",
+        "WEB_TECHNOLOGY_DISCOVERY",
+        "TLS_ANALYSIS",
+        "SCREENSHOT_CAPTURE"
+      ],
+      "failed_actions": [],
+      "previous_observations": [],
+      "resolved_ip": "104.16.1.2",
+      "subdomains": [
+        "www.bigcorp2.com",
+        "shop.bigcorp2.com"
+      ],
+      "subdomain_resolutions": {
+        "www.bigcorp2.com": "104.16.1.2",
+        "shop.bigcorp2.com": "104.16.1.2"
+      },
+      "active_subtarget": null,
+      "subtarget_results": {}
+    },
+    "expected_profiles": [
+      "WEB_APPLICATION",
+      "DOMAIN"
+    ],
+    "expected_capabilities": [
+      "STOP_NO_RELEVANT_ACTION"
+    ],
+    "rule": "DO NOT pivot to same-IP subdomains; CDN -> skip content/headers; nothing left"
+  },
+  {
+    "id": "subdomains_exhausted",
+    "description": "All different-IP subdomains already investigated",
+    "evidence": {
+      "target": "bigcorp3.com",
+      "authorized_scope": true,
+      "target_type": "domain",
+      "reachable": true,
+      "open_ports": [
+        443
+      ],
+      "services": [
+        "https"
+      ],
+      "technologies": [
+        "Cloudflare"
+      ],
+      "completed_actions": [
+        "PASSIVE_ASSET_DISCOVERY",
+        "SUBDOMAIN_DISCOVERY",
+        "DNS_RESOLUTION",
+        "PORT_DISCOVERY",
+        "SERVICE_DETECTION",
+        "WEB_PROBING",
+        "WEB_TECHNOLOGY_DISCOVERY",
+        "TLS_ANALYSIS",
+        "SCREENSHOT_CAPTURE"
+      ],
+      "failed_actions": [],
+      "previous_observations": [],
+      "resolved_ip": "104.16.1.3",
+      "subdomains_exhausted": true,
+      "subdomain_resolutions": {
+        "vpn.bigcorp3.com": "198.51.100.30"
+      },
+      "subtarget_results": {
+        "vpn.bigcorp3.com": {
+          "open_ports": [
+            443
+          ]
+        }
+      },
+      "active_subtarget": null
+    },
+    "expected_profiles": [
+      "WEB_APPLICATION",
+      "DOMAIN"
+    ],
+    "expected_capabilities": [
+      "STOP_NO_RELEVANT_ACTION"
+    ],
+    "rule": "subdomains_exhausted true -> no PIVOT"
+  },
+  {
+    "id": "subtarget_done_return",
+    "description": "Investigating a subdomain whose recon is exhausted",
+    "evidence": {
+      "target": "vpn.bigcorp4.com",
+      "authorized_scope": true,
+      "target_type": "domain",
+      "reachable": true,
+      "open_ports": [
+        443
+      ],
+      "services": [
+        "https"
+      ],
+      "technologies": [
+        "Fortinet SSL VPN"
+      ],
+      "completed_actions": [
+        "PORT_DISCOVERY",
+        "SERVICE_DETECTION",
+        "WEB_PROBING",
+        "WEB_TECHNOLOGY_DISCOVERY",
+        "TLS_ANALYSIS",
+        "HEADER_ANALYSIS",
+        "CONTENT_DISCOVERY",
+        "PARAMETER_DISCOVERY",
+        "SCREENSHOT_CAPTURE"
+      ],
+      "failed_actions": [],
+      "previous_observations": [],
+      "active_subtarget": "vpn.bigcorp4.com",
+      "subtarget_parent": "bigcorp4.com"
+    },
+    "expected_profiles": [
+      "WEB_APPLICATION"
+    ],
+    "expected_capabilities": [
+      "RETURN_FROM_SUBDOMAIN",
+      "STOP_NO_RELEVANT_ACTION"
+    ],
+    "rule": "active_subtarget set + recon exhausted -> RETURN_FROM_SUBDOMAIN"
+  }
+]

@@ -1,0 +1,37 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt pytest ruff flask
+      - name: Lint (new planner / benchmark modules)
+        run: |
+          ruff check planner_policy.py schema/validator.py run_benchmark.py \
+            benchmarks/lab_bench.py scripts/decisions_to_scenarios.py scripts/package.py \
+            tests/test_planner_policy.py tests/test_validator.py tests/test_lab_bench.py \
+            auth_handling.py tests/test_auth_handling.py tests/test_owasp_target_coverage.py \
+            benchmarks/paper_results.py tests/test_paper_results.py
+      - name: Tests
+        # tool-dependent tests need nmap/impacket/etc.; they are deselected on CI
+        run: |
+          python -m pytest tests/ -q \
+            --deselect tests/test_preflight.py::test_preflight_all_ok_only_when_nothing_missing \
+            --deselect tests/test_os_identify.py::test_os_detect_degrades_to_ttl_heuristic_without_passwordless_sudo \
+            --deselect tests/test_ad_exploit.py::test_smb_nullsess_skips_when_smb_closed
+      - name: Planner benchmark (deterministic rules, no model)
+        run: python run_benchmark.py --rules-only --no-save --min-pass 0.95

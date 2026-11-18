@@ -1,0 +1,32 @@
+{
+  "note": "Reference versions CyberSwarm tooling was developed/tested against. Preflight only warns when one of these is not on PATH at all; it does not enforce a minimum version at runtime. Bump here whenever you validate against a newer release.",
+  "binaries": {
+    "nuclei": { "reference": ">=3.2", "about": "general vulnerability scan engine" },
+    "nmap": { "reference": ">=7.92", "about": "port/service discovery & NSE" },
+    "subfinder": { "reference": ">=2.6", "about": "passive subdomain enumeration" },
+    "amass": { "reference": ">=4.0", "about": "attack-surface mapping (OWASP Amass)" },
+    "httpx": { "reference": ">=1.6", "about": "web probing" },
+    "whatweb": { "reference": ">=0.5", "about": "web tech fingerprinting" },
+    "ffuf": { "reference": ">=2.1", "about": "content/parameter fuzzing" },
+    "feroxbuster": { "reference": ">=2.10", "about": "content discovery (attack registry)" },
+    "katana": { "reference": ">=1.0", "about": "crawling" },
+    "arjun": { "reference": ">=2.2", "about": "parameter discovery" },
+    "gau": { "reference": ">=2.0", "about": "historical URL discovery" },
+    "wafw00f": { "reference": ">=2.2", "about": "WAF detection" },
+    "sqlmap": { "reference": ">=1.7", "about": "SQL injection engine" },
+    "nikto": { "reference": ">=2.5", "about": "web vulnerability scanner" },
+    "searchsploit": { "reference": ">=2024", "about": "exploit-db search" },
+    "commix": { "reference": ">=3.8", "about": "command injection engine" },
+    "dalfox": { "reference": ">=2.9", "about": "XSS scanner (attack registry)" },
+    "corsy": { "reference": ">=1.0", "about": "CORS misconfiguration scanner" },
+    "subjack": { "reference": ">=1.1", "about": "subdomain takeover check" },
+    "jwt_tool": { "reference": ">=2.2", "about": "JWT attack tool" },
+    "wpscan": { "reference": ">=3.8", "about": "WordPress assessment" },
+    "gowitness": { "reference": ">=2.5", "about": "screenshots" },
+    "naabu": { "reference": ">=2.1", "about": "fast port scanner" },
+    "hydra": { "reference": ">=9.4", "about": "login brute force" },
+    "sslyze": { "reference": ">=5.1", "about": "TLS scan (attack registry)" },
+    "testssl": { "reference": ">=3.0", "about": "TLS analysis (split from testssl.sh)" },
+    "curl": { "reference": "any", "about": "HTTP oracle used by curl-based attack tools" }
+  }
+}

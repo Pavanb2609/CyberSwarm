@@ -1,0 +1,160 @@
+# CyberSwarm configuration (defaults; override via CLI flags)
+
+model:
+  backend: ollama            # ollama | openai_compat | local
+  model: qwen3:14b           # benchmark winner (84.6% guarded pass, 100% JSON valid, 1.55 s/scenario; dolphin-cyber-tools measured at 1.9% raw / 44% JSON / 15 s per call)
+  # model_critic == model_deep here (both qwen3:14b) means CriticAgent reviews
+  # findings with the SAME model that produced them -- a same-prompted second
+  # pass, not genuinely independent adversarial review. run_agent_loop.py
+  # prints a [WARNING] at startup when these match. If you can spare the
+  # VRAM/latency, point model_critic at a different model (a different size,
+  # quantization, or family) for a real second opinion.
+  model_critic: qwen3:14b     # critic pass (switch to qwen3:30b for a genuinely independent reviewer if VRAM allows)
+  model_planner: qwen3:14b    # attack-graph planning (qwen3:14b: 76.9% capability acc, best of all tested)
+  model_deep: qwen3:14b       # deep agent analysis; trading speed for depth
+  base_url: http://192.168.2.2:11434
+pipeline:
+  max_agents: 24             # agent runs per full sweep (raised to cover all 23 agents)
+  max_pivot_depth: 3         # how deep pivots go (raised to cascade onto subdomains)
+  auto_approve: false        # set true for unattended runs
+  force: false               # skip authorization prompt if target unknown
+  llm_planner: true          # LLM refine the attack graph (false = rules only)
+
+recon:
+  run_full: true             # run full Phase-1 recon before attack
+  benchmark_mode: false
+  max_iterations: 26         # allow all 26 recon capabilities to run (default was 8)
+
+attack:
+  tool_timeout: 900          # per-tool subprocess cap (seconds) (raised from 240 for deep fuzzers)
+  waf_skip: false            # don't auto-skip content-discovery tools when a CDN/WAF is detected
+  confirm_before_scan: true
+  owasp: true                # force deterministic OWASP Top-10 coverage (SQLi/XSS/CMDi always run on param'd surfaces)
+  # Burp Suite Professional active scanner (optional enhancement).
+  # The burp agent is skipped entirely unless the REST API below is reachable.
+  # Requires Burp Professional; Community edition has no REST API and degrades
+  # cleanly (no burp agent runs, nothing crashes).
+  burp:
+    enabled: true            # allow the burp agent to run when REST API is available
+    home: /home/ubuntu/BurpSuite
+    headless: true
+    api_host: 127.0.0.1      # loopback only; never expose the REST API to other hosts
+    api_port: 1337
+    api_key: ""              # optional; empty = no auth header sent
+    timeout: 3600            # per-scan cap (seconds)
+
+report:
+  output_dir: results/reports
+  include_raw: false
+
+burp:
+  # Optional Burp Suite Professional active scanner. Community edition has no
+  # REST API, so the burp agent simply never runs there.
+  # The REST API is enabled inside Burp (Settings -> Suite -> REST API), where
+  # you also generate the API key. To run headless, export that user config
+  # from Burp once and point user_config at the exported file.
+  home: /home/ubuntu/BurpSuite
+  jar: ""                    # explicit path to burpsuite.jar; blank = auto-detect under home
+  api_host: 127.0.0.1
+  api_port: 1337
+  api_key: ""                # from Burp's REST API settings; blank = unauthenticated API
+  scheme: http               # Burp's REST API is plain HTTP on loopback
+  headless: true
+  edition: ""                # "pro" | "community" | "" to auto-detect from the jar filename
+  project_dir: ""            # where per-target .burp project files go; blank = home
+  user_config: ""            # exported Burp user config (this is what enables the REST API)
+  project_config: ""         # optional project config; blank = --use-defaults
+  timeout: 3600              # seconds to wait for a scan to finish
+
+prompts:
+  # Reusable prompts are markdown files with YAML frontmatter. Drop one into
+  # this directory and it is available immediately -- see `cli.py help prompts`.
+  dir: prompts
+
+ad:
+  # Active Directory relationship analysis + exploitation. The analysis half
+  # reads a SharpHound/BloodHound collection you produced separately and reports
+  # the attack paths it implies. The exploitation half proves the three cheap,
+  # non-destructive misconfigs the enumeration indicated:
+  #   * AS-REP roast  (accounts with DONT_REQ_PREAUTH)  — no credentials needed
+  #   * Kerberoast    (SPN accounts)                    — needs ad.credentials
+  #   * SMB null session (anonymous share enum)         — no credentials needed
+  sharphound_dir: ""         # directory of SharpHound *.json; blank = LDAP enum only
+  max_paths: 5               # attack paths reported per run
+  max_path_cost: 30          # give up on paths more expensive than this
+  dc_ip: ""                  # optional; defaults to the scanned host
+  domain: ""                 # optional; defaults to the LDAP naming context
+  # Engagement domain credential — optional. When set, Kerberoasting runs and
+  # returns $krb5tgs$ hashes; when blank, Kerberoastable accounts are reported
+  # instead of proved (AS-REP roast + null-session still run unauthenticated).
+  credentials:
+    username: ""
+    password: ""
+    domain: ""
+
+zap:
+  # OWASP ZAP — the free active scanner, used when Burp Professional is not
+  # available (Burp Community has no scanner engine of its own).
+  host: 127.0.0.1
+  port: 8080
+  api_key: ""                # ZAP API key if you set one; blank = loopback only
+  path: ""                   # path to zap.sh; blank = auto-detect on PATH
+  auto_start: true           # launch ZAP in daemon mode if installed but stopped
+  timeout: 1800
+
+scan:
+  # Which active-scan engine to prefer. "auto" tries Burp Professional, then
+  # ZAP, and reports honestly that Burp Community cannot scan.
+  prefer: auto               # auto | burp | zap
+
+difficulty:
+  # Real-time task difficulty assessment (TDA). Scores each attack-graph branch
+  # on how tractable it still looks, so the planner stops over-committing to
+  # dead ends and running out of context mid-chain. Advisory: it reorders and
+  # marks branches skipped with a reason, it never deletes work silently.
+  enabled: true
+  weights:                   # value signals; normalised automatically
+    horizon: 0.35            # fewer remaining steps scores higher
+    evidence: 0.40           # mean confidence of findings along the path
+    historical: 0.25         # how often this agent has worked before
+  thresholds:
+    abandon_below: 0.25
+    deprioritise_below: 0.45
+    context_hard_stop: 0.90  # context consumed past this = abandon, regardless of score
+
+phases:
+  # Engagement phase model with quality gates. Gates are advisory: they stop a
+  # run from exploiting a host it never enumerated, and can be overridden with
+  # --force. Target authorization stays entirely in authorization.py.
+  enabled: true
+  gates:
+    min_discovery_coverage: 0.4       # fraction of DISCOVERY capabilities before ENUMERATION
+    min_enumeration_coverage: 0.5     # before SURFACE_MAPPING and EXPLOITATION
+    min_surface_coverage: 0.25        # before EXPLOITATION
+    require_open_port_for_exploitation: true
+
+session:
+  # How much rope a run gets, and when it stops to check in.
+  mode: auto            # auto | guided | free
+  pause: never          # never | always | checkpoint
+  checkpoint_severity: HIGH
+
+rag:
+  # Cross-engagement lesson memory (SQLite + FTS5 keyword retrieval).
+  # Indexes results/evidence, results/attack_evidence, results/tool_memory.json
+  # and results/attack_decision_log.jsonl, then feeds the top-k matches to the
+  # planner. Set enabled: false to plan exactly as before this feature landed.
+  enabled: true
+  db_path: results/idx/cyberswarm_memory.sqlite   # relative paths resolve under the project root
+  top_k: 5                   # lessons injected per planner call (keep small for qwen3:8b)
+  auto_reindex: true         # rebuild after each recon/attack run
+  index_skills: true         # also index skill packs for on-demand retrieval
+  skills_dir:                # one or more roots, scanned recursively for *.md
+    - cyberswarm-phase2-agent-skill
+    - skills
+  skill_top_k: 2             # playbook excerpts injected per planner call
+  skill_excludes:            # categories with no matching agent — advice we cannot act on
+    - playbooks/ad
+    - services/pivoting
+    - services/mobile-android
+    - phases/post-exploit

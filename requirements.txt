@@ -1,0 +1,4 @@
+requests>=2.31
+PyYAML>=6.0        # config.yaml loading (cli.py, run_agent_loop.py)
+dnspython>=2.4      # DNS enumeration (tools/dns/dns_enum.py)
+ldap3>=2.9          # LDAP/AD enumeration (tools/directory/ldap_enum.py)

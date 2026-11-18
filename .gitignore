@@ -1,0 +1,24 @@
+__pycache__/
+*.py[cod]
+venv/
+.env
+*.egg-info/
+.pytest_cache/
+
+# Runtime results (evidence contains real target data)
+results/
+
+# Editor/agent tooling cache (node_modules) — repo keeps only the skill refs
+.opencode/
+
+# Stray scratch / benchmark outputs
+results_*.json
+
+# Tool installs (user-local copies used by wrappers)
+~/.local/bin/cyberswarm
+docs/skill/SKILL.md.bak
+session.txt
+
+# Build output of scripts/package.py
+dist/
+.ruff_cache/
